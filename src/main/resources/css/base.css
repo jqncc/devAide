@@ -1,0 +1,37 @@
+.root{-fx-font-size:12px;-fx-text-fill:#333;}
+.button{-fx-font-size:12px;}
+
+.tab-pane {
+    -fx-background-color: #fff;
+}
+
+/* 修改顶栏的背景颜色 */
+.tab-pane>*.tab-header-area>*.tab-header-background
+{
+    -fx-background-color:#f5f5f5;
+}
+
+/* 修改Tab中文本的颜色 */
+.tab-label {
+    -fx-text-fill: #999;
+}
+/* 子代选择器，Tab选中的时候选择其子元素tab-label */
+.tab:selected .tab-label {
+    -fx-text-fill: #666;
+}
+.tab{-fx-border-width:0;-fx-background-color: #fff;}
+/* tab选中时设置背景颜色 */
+.tab:selected {
+    -fx-background-color: #fff;
+    -fx-border-radius: 0px;
+    -fx-border-width: 3px 0 0 0;
+    -fx-border-color: #333;
+}
+/* Tab选中的时候选中其边框并修改样式 */
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-radius: 0px;
+    -fx-border-width: 0px 0 0 0;
+    -fx-border-color: #333;
+/*    -fx-background-color:#fff;*/
+    -fx-text-fill:#333;
+}

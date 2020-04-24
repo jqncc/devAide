@@ -1,6 +1,7 @@
 package org.jflame.devAide.controller;
 
 import org.jflame.commons.util.StringHelper;
+import org.jflame.devAide.util.UIComponentCreater;
 
 import com.alibaba.fastjson.JSON;
 
@@ -25,6 +26,9 @@ public class JsonToolView {
         if (StringHelper.isNotEmpty(srcJson)) {
             if (JSON.isValid(srcJson)) {
                 toJson = JSON.toJSONString(JSON.parse(srcJson), true);
+            } else {
+                UIComponentCreater.createAlert("非法的JSON字符串")
+                        .show();
             }
         }
         targetText.setText(toJson);

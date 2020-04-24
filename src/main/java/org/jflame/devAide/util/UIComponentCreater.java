@@ -3,6 +3,9 @@ package org.jflame.devAide.util;
 import org.controlsfx.dialog.ExceptionDialog;
 import org.jflame.devAide.Globals;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
 
 /**
@@ -52,6 +55,14 @@ public final class UIComponentCreater {
                 .getStylesheets()
                 .addAll(Globals.getCssFiles());
         return dlg;
+    }
+
+    public static Alert createAlert(String errorMsg) {
+        return new Alert(AlertType.INFORMATION, errorMsg, ButtonType.OK);
+    }
+
+    public static Alert createErrorAlert(String errorMsg) {
+        return new Alert(AlertType.ERROR, errorMsg, ButtonType.OK);
     }
 
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<contextName>devAide</contextName>
+	<property name="logDir" value="logs" />
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="rollingFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logDir}/log.log</file>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logDir}/log%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+			<maxFileSize>30MB</maxFileSize>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d %-5level %logger{36} - %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+	<appender name="asyncRollingFile" class="ch.qos.logback.classic.AsyncAppender">
+		<!-- <queueSize>512</queueSize> -->
+		<discardingThreshold>0</discardingThreshold>
+		<appender-ref ref="rollingFile" />
+	</appender>
+	
+	<logger name="org.springframework" level="warn" />
+	<logger name="org.springframework.web" level="warn" />
+	<logger name="org.apache.ibatis" level="warn" />
+	<logger name="org.mybatis.spring" level="warn" />
+	<logger name="com.baomidou.mybatisplus" level="warn" />
+	<logger name="com.alibaba.dubbo" level="warn" />
+	<logger name="org.apache" level="warn" />
+
+	<root level="${log.level}">
+	   <!-- 生成环境取消 console输出-->
+		<appender-ref ref="console" /> 
+		<appender-ref ref="asyncRollingFile" />
+	</root>
+	
+	<shutdownHook />
+</configuration>

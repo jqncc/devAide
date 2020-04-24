@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
+<?import org.controlsfx.control.StatusBar?>
+<?import org.controlsfx.glyphfont.Glyph?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.MainView">
+	<left>
+		<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="200.0" prefHeight="768.0" prefWidth="200.0" spacing="15.0" BorderPane.alignment="CENTER">
+			<children>
+				<Button id="btnKnow" styleClass="flatBtn bigBtn bgBlue" text="知识库" textAlignment="CENTER" wrapText="true">
+					<graphic>
+						<Glyph fontFamily="FontAwesome" fontSize="18" icon="NAVICON" />
+					</graphic>
+				</Button>
+				<Button id="btnToolbox" styleClass="flatBtn bigBtn bgGreen" text="工具箱" textAlignment="CENTER" wrapText="true">
+					<graphic>
+						<Glyph fontFamily="FontAwesome" fontSize="18" icon="GEARS" />
+					</graphic>
+				</Button>
+				<Separator />
+            <ListView id="lstViewTool" fx:id="lstViewTool" prefHeight="589.0" prefWidth="170.0" />
+			</children>
+			<padding>
+				<Insets bottom="10.0" left="15.0" right="15.0" />
+			</padding>
+		</VBox>
+	</left>
+	<center>
+		<TabPane id="mainTab" fx:id="mainTab" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="768.0" prefWidth="800.0" tabClosingPolicy="ALL_TABS" tabMinHeight="32.0" tabMinWidth="60.0" BorderPane.alignment="CENTER">
+			<tabs>
+				<Tab id="tabKnow" closable="false" text="知识库">
+					<content>
+						<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="726.0" prefWidth="790.0" style="-fx-background-color: #fff;">
+							<children>
+								<WebView fx:id="mainWebView" prefHeight="713.0" prefWidth="779.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+							</children>
+						</AnchorPane>
+					</content>
+				</Tab>
+			</tabs>
+			<BorderPane.margin>
+				<Insets />
+			</BorderPane.margin>
+		</TabPane>
+	</center>
+	<padding>
+		<Insets top="20.0" />
+	</padding>
+   <bottom>
+      <StatusBar id="statusBar" fx:id="statusBar" text="" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>

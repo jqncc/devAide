@@ -1,37 +1,105 @@
-.root{-fx-font-size:12px;-fx-text-fill:#333;}
-.button{-fx-font-size:12px;}
+/*@font-face {
+    font-family: Roboto;
+    src: url("Roboto-Regular.ttf");
+}*/
+.root {
+    -fx-font-family:"Microsoft YaHei";
+    -fx-font-size:14px;
+    -fx-text-fill:#333;
+}
+.button{-fx-border-radius:0;-fx-background-radius:0}
 
-.tab-pane {
+#mainTab {
     -fx-background-color: #fff;
 }
 
+#statusBar{
+	-fx-background-color: #333;
+	-fx-text-fill:#ccc; 
+	-fx-pref-height:24px; 
+	-fx-pref-width:1000;
+	-fx-font-size:9px;
+	-fx-padding:0 0 0 15px;
+}
+
 /* 修改顶栏的背景颜色 */
-.tab-pane>*.tab-header-area>*.tab-header-background
+#mainTab>*.tab-header-area>*.tab-header-background
 {
     -fx-background-color:#f5f5f5;
 }
 
 /* 修改Tab中文本的颜色 */
 .tab-label {
-    -fx-text-fill: #999;
+    -fx-text-fill: #999; -fx-font-size:12px;
 }
 /* 子代选择器，Tab选中的时候选择其子元素tab-label */
 .tab:selected .tab-label {
     -fx-text-fill: #666;
 }
-.tab{-fx-border-width:0;-fx-background-color: #fff;}
+#mainTab .tab-content-area{-fx-padding:10px 5px;}
+.tab{-fx-border-width:0;-fx-background-color: #eee;}
+
 /* tab选中时设置背景颜色 */
 .tab:selected {
     -fx-background-color: #fff;
     -fx-border-radius: 0px;
     -fx-border-width: 3px 0 0 0;
-    -fx-border-color: #333;
+    -fx-border-color: #5CB85C;
 }
 /* Tab选中的时候选中其边框并修改样式 */
 .tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
     -fx-border-radius: 0px;
     -fx-border-width: 0px 0 0 0;
-    -fx-border-color: #333;
-/*    -fx-background-color:#fff;*/
+    -fx-border-color: #5CB85C;
     -fx-text-fill:#333;
 }
+
+.jfx-decorator {
+   /*-fx-decorator-color: derive(#5264AE, -20%);transparent*/
+    -fx-decorator-color: #fff;
+    -fx-background-color:#f6f6f6;
+    -fx-fill: #333;
+    -fx-text-fill:white;
+}
+
+.jfx-decorator .jfx-decorator-buttons-container {
+    -fx-background-color: #333;
+}
+
+.jfx-decorator .resize-border {
+    -fx-border-color: -fx-decorator-color;
+/*    -fx-border-width: 0 2 2 2;*/
+}
+/*
+边框标题居中
+.jfx-decorator .jfx-decorator-title-container{ -fx-alignment:CENTER;}#21b384 .exception-dialog .dialog-pane */
+
+.jfx-decorator .jfx-decorator-title-container .jfx-decorator-text {
+   -fx-text-fill:white;
+   -fx-font-size: 12;
+   -fx-font-family:Arial;
+}
+.jfx-decorator-button{
+	-fx-background-color:transparent;
+}
+
+.flatBtn{-fx-text-fill:#fff;-fx-border-radius:0;-fx-background-radius:0}
+.flatBtn .glyph-font{-fx-text-fill:#fff;}
+.bgGreen{-fx-background-color:#5CB85C;}
+.bgBlue{-fx-background-color:#337AB7;}
+
+.bigBtn{-fx-font-size: 18px;-fx-pref-height:54;-fx-pref-width:150;-fx-max-height:54;-fx-max-width:150;}
+/*.mainBtn .glyph-font{-fx-text-fill:#fff;-fx-label-padding:0 6px 0 0;} */
+
+#lstViewTool{-fx-background-color:transparent;}
+#lstViewTool .list-cell{-fx-background-color:transparent;-fx-cell-size:30} /*.cell.indexed-cell */
+#lstViewTool .list-cell:selected{-fx-background-color:#fff;-fx-text-fill:#333;}
+#lstViewTool .list-cell .glyph-font{-fx-label-padding:0 8px 0 0;-fx-text-fill:#333;}
+
+.exception-dialog .text-area{-fx-font-size:10px;}
+
+/*多行输入框字体样式
+ * .text-area {-fx-font-size:14px;-fx-text-fill:red} */
+ 
+
+

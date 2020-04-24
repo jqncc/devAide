@@ -1,10 +1,12 @@
 /*
- *	Apply google Roboto font to all UI components
+ *	Apply google Roboto font to all UI components"Roboto"
  */
 
 .root {
     -fx-font-family: "Roboto";
     -fx-font-smoothing-type: gray;
+    -fx-font-size:14px;
+    -fx-text-fill:#333;
 }
 
 .side-menu {
@@ -806,6 +808,9 @@
    -fx-text-fill:white;
 /*-fx-fill: #333;*/
    -fx-font-size: 12;
+}
+.jfx-decorator-button{
+	-fx-background-color: #333;
 }
 
 /*

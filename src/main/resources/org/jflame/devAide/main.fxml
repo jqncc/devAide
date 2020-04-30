@@ -13,16 +13,16 @@
 <?import org.controlsfx.control.StatusBar?>
 <?import org.controlsfx.glyphfont.Glyph?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.MainView">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.MainController">
 	<left>
 		<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="200.0" prefHeight="768.0" prefWidth="200.0" spacing="15.0" BorderPane.alignment="CENTER">
 			<children>
-				<Button id="btnKnow" styleClass="flatBtn bigBtn bgBlue" text="知识库" textAlignment="CENTER" wrapText="true">
+				<Button id="btnKnow" styleClass="flatBtn,bigBtn,btn-primary" text="知识库" textAlignment="CENTER" wrapText="true">
 					<graphic>
 						<Glyph fontFamily="FontAwesome" fontSize="18" icon="NAVICON" />
 					</graphic>
 				</Button>
-				<Button id="btnToolbox" styleClass="flatBtn bigBtn bgGreen" text="工具箱" textAlignment="CENTER" wrapText="true">
+				<Button id="btnToolbox" styleClass="flatBtn,bigBtn,btn-success" text="工具箱" textAlignment="CENTER" wrapText="true">
 					<graphic>
 						<Glyph fontFamily="FontAwesome" fontSize="18" icon="GEARS" />
 					</graphic>

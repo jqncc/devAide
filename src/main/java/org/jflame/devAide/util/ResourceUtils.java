@@ -16,7 +16,8 @@ public class ResourceUtils {
      * @return
      */
     public static String absUrl(String relativePath) {
-        return ResourceUtils.class.getResource(relativePath).toExternalForm();
+        return ResourceUtils.class.getResource(relativePath)
+                .toExternalForm();
     }
 
     private static final String CSS_DIR = "/css";

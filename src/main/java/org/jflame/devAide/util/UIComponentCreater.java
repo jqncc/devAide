@@ -1,7 +1,7 @@
 package org.jflame.devAide.util;
 
 import org.controlsfx.dialog.ExceptionDialog;
-import org.jflame.devAide.Globals;
+import org.jflame.devAide.AppContext;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -50,15 +50,36 @@ public final class UIComponentCreater {
     public static ExceptionDialog createExDialog(String errorMsg, Exception e) {
         ExceptionDialog dlg = new ExceptionDialog(e);
         dlg.setHeaderText(errorMsg);
+        dlg.setTitle("异常提示");
         // 对话框的Scene是独立的,样式没有共用主界面,所以需要单独引用
         dlg.getDialogPane()
                 .getStylesheets()
-                .addAll(Globals.getCssFiles());
+                .addAll(AppContext.getStyleFiles());
         return dlg;
     }
 
     public static Alert createAlert(String errorMsg) {
-        return new Alert(AlertType.INFORMATION, errorMsg, ButtonType.OK);
+        Alert alert = new Alert(AlertType.INFORMATION, errorMsg, ButtonType.OK);
+        /* alert.getDialogPane()
+                .setStyle("-fx-background-color:#fff;-fx-border-width:1px;-fx-border-color:#ccc");
+        alert.setHeaderText(null);
+        alert.initStyle(StageStyle.UNDECORATED);
+        double x,y;
+        alert.getDialogPane()
+                .getContent()
+                .setOnMousePressed(new EventHandler<MouseEvent>() {
+        
+                    @Override
+                    public void handle(MouseEvent event) {
+                        x = event.getSceneX();
+                        y = event.getSceneY();
+                    }
+        
+                });
+        alert.setGraphic(Globals.FONT_AWESOME.create(FontAwesome.Glyph.EXCLAMATION_CIRCLE)
+                .color(Color.WHITE)
+                .size(18));*/
+        return alert;
     }
 
     public static Alert createErrorAlert(String errorMsg) {

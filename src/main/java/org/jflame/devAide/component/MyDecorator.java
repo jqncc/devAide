@@ -670,7 +670,9 @@ public class MyDecorator extends VBox {
         MyDecorator decorator = new MyDecorator(stage, parent, false, true, true);
         decorator.setCustomMaximize(true);
         decorator.setTitle(title);
-        decorator.setGraphic(UIComponentCreater.createImageView(icon, 16, 16));
+        if (icon != null) {
+            decorator.setGraphic(UIComponentCreater.createImageView(icon, 16, 16));
+        }
         return decorator;
     }
 }

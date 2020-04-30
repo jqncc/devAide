@@ -7,8 +7,7 @@
     -fx-font-size:14px;
     -fx-text-fill:#333;
 }
-.button{-fx-border-radius:0;-fx-background-radius:0}
-
+.text-area,.text-area:focused{-fx-background-radius: 0;-fx-background-insets: -0.1, 1, 1;}
 #mainTab {
     -fx-background-color: #fff;
 }
@@ -19,9 +18,10 @@
 	-fx-pref-height:24px; 
 	-fx-pref-width:1000;
 	-fx-font-size:9px;
-	-fx-padding:0 0 0 15px;
+	-fx-padding:2px 10px;
 }
-
+.gitlink{-fx-text-fill:#999}
+.gitlink:hover{-fx-text-fill:#ccc}
 /* 修改顶栏的背景颜色 */
 #mainTab>*.tab-header-area>*.tab-header-background
 {
@@ -36,7 +36,7 @@
 .tab:selected .tab-label {
     -fx-text-fill: #666;
 }
-#mainTab .tab-content-area{-fx-padding:10px 5px;}
+#mainTab .tab-content-area{-fx-padding:15px;}
 .tab{-fx-border-width:0;-fx-background-color: #eee;}
 
 /* tab选中时设置背景颜色 */
@@ -49,7 +49,7 @@
 /* Tab选中的时候选中其边框并修改样式 */
 .tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
     -fx-border-radius: 0px;
-    -fx-border-width: 0px 0 0 0;
+    -fx-border-width: 0;
     -fx-border-color: #5CB85C;
     -fx-text-fill:#333;
 }
@@ -67,8 +67,8 @@
 }
 
 .jfx-decorator .resize-border {
-    -fx-border-color: -fx-decorator-color;
-/*    -fx-border-width: 0 2 2 2;*/
+    -fx-border-color: transparent;
+    -fx-border-width: 0 2px;
 }
 /*
 边框标题居中
@@ -83,23 +83,49 @@
 	-fx-background-color:transparent;
 }
 
-.flatBtn{-fx-text-fill:#fff;-fx-border-radius:0;-fx-background-radius:0}
-.flatBtn .glyph-font{-fx-text-fill:#fff;}
-.bgGreen{-fx-background-color:#5CB85C;}
-.bgBlue{-fx-background-color:#337AB7;}
+.flatBtn{
+	-fx-text-fill:#fff;
+	-fx-border-radius:0;
+	-fx-background-radius:0;
+	-fx-cursor: default;
+	-fx-text-alignment: center;
+	-fx-padding:5px 10px;
+}
 
-.bigBtn{-fx-font-size: 18px;-fx-pref-height:54;-fx-pref-width:150;-fx-max-height:54;-fx-max-width:150;}
-/*.mainBtn .glyph-font{-fx-text-fill:#fff;-fx-label-padding:0 6px 0 0;} */
+.flatBtn .glyph-font{-fx-text-fill:#fff;}
+
+.btn-success{-fx-background-color:#5CB85C;}
+.btn-success:hover{-fx-background-color:#459E45;}
+
+.btn-primary{-fx-background-color:#337AB7;}
+.btn-primary:hover,.btn-primary:focused{-fx-background-color: #2B6799}
+
+.btn-info{-fx-background-color:#27A5C9;}
+.btn-info:hover,.btn-info:focused{-fx-background-color: #2292B3;}
+
+.btn-warn{-fx-background-color:#F0AD4E;}
+.btn-warn:hover,.btn-warn:focused{-fx-background-color: #ED9621;}
+
+.btn-gray{-fx-background-color:#E0E0E0;-fx-text-fill:#333}
+.btn-gray:hover,.btn-gray:focused{-fx-background-color: #ccc;-fx-text-fill:#333}
+
+#btnKnow,#btnToolbox{-fx-padding:10px 5px;-fx-font-size: 18px;-fx-pref-width:150;-fx-max-width:150;/*-fx-pref-height:100px;-fx-max-height:100px;*/}
 
 #lstViewTool{-fx-background-color:transparent;}
-#lstViewTool .list-cell{-fx-background-color:transparent;-fx-cell-size:30} /*.cell.indexed-cell */
+#lstViewTool .list-cell{-fx-background-color:transparent;-fx-cell-size:30} /*.cell.indexed-cell ,.btn-primary:focused*/
 #lstViewTool .list-cell:selected{-fx-background-color:#fff;-fx-text-fill:#333;}
 #lstViewTool .list-cell .glyph-font{-fx-label-padding:0 8px 0 0;-fx-text-fill:#333;}
 
+.exception-dialog{-fx-font-size:12px;}
 .exception-dialog .text-area{-fx-font-size:10px;}
 
 /*多行输入框字体样式
  * .text-area {-fx-font-size:14px;-fx-text-fill:red} */
- 
+.dialog-pane{-fx-border-color:#ccc;-fx-border-width: 1px;-fx-background-color:#fff;}
+/*.dialog-pane .header-panel{-fx-border-color: black;-fx-border-width: 1px}
+.dialog-pane .content {-fx-border-color: #ccc;-fx-border-width: 1px}
+.dialog-pane .button-bar  {-fx-border-color: #666;-fx-border-width: 1px}
+ */
 
-
+#qrcodeBox{-fx-border-color:#ccc;-fx-border-width: 1px;}
+#qrcodeBox .label{-fx-text-fill:#999}

@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER" gridLinesVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.JsonToolView">
+<GridPane alignment="CENTER" gridLinesVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.FormatToolController">
   <columnConstraints>
     <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="400.0" minWidth="10.0" percentWidth="45.0" prefWidth="285.0" />
     <ColumnConstraints halignment="CENTER" maxWidth="194.0" minWidth="0.0" percentWidth="10.0" prefWidth="76.0" />
@@ -16,8 +16,8 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <TextArea fx:id="srcText" prefHeight="600.0" prefWidth="300.0" promptText="待格式化JSON" />
+      <TextArea fx:id="srcText" prefHeight="600.0" prefWidth="300.0" promptText="待格式化文本,支持xml/json格式" />
       <TextArea fx:id="targetText" prefHeight="600.0" prefWidth="300.0" GridPane.columnIndex="2" />
-      <Button fx:id="btnJsonFmt" mnemonicParsing="false" onAction="#formattHandle" text="格式化" GridPane.columnIndex="1" />
+      <Button fx:id="btnJsonFmt" mnemonicParsing="false" onAction="#formattHandle" text="格式化" GridPane.columnIndex="1" styleClass="flatBtn,btn-info" />
    </children>
 </GridPane>

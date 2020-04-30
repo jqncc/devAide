@@ -1,13 +1,14 @@
 package org.jflame.devAide.util;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import org.jflame.devAide.App;
+import org.jflame.devAide.AppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 
 /**
@@ -23,15 +24,39 @@ public class FxUtils {
      * @param fxml fxml文件名
      * @return Optional&lt;Parent&gt; 加载异常时返回Optional.empty
      */
-    public static Optional<Parent> loadFXML(String fxml) {
+    public static Parent loadFXML(String fxml) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-            return Optional.ofNullable(fxmlLoader.load());
-        } catch (IOException | IllegalStateException e) {
+            if (AppContext.getInstance()
+                    .getResourceBundle() != null) {
+                fxmlLoader.setResources(AppContext.getInstance()
+                        .getResourceBundle());
+            }
+            return fxmlLoader.load();
+        } catch (IOException e) {
             UIComponentCreater.createExDialog("加载界面异常,fxml: " + fxml, e)
                     .show();
             logger.error("加载fxml异常" + fxml, e);
+            throw new RuntimeException(e);
         }
-        return Optional.empty();
+    }
+
+    public static Parent loadFXML(String fxml, Node root, Object controller) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+            if (AppContext.getInstance()
+                    .getResourceBundle() != null) {
+                fxmlLoader.setResources(AppContext.getInstance()
+                        .getResourceBundle());
+            }
+            fxmlLoader.setRoot(root);
+            fxmlLoader.setController(controller);
+            return fxmlLoader.load();
+        } catch (IOException e) {
+            UIComponentCreater.createExDialog("加载界面异常,fxml: " + fxml, e)
+                    .show();
+            logger.error("加载fxml异常" + fxml, e);
+            throw new RuntimeException(e);
+        }
     }
 }

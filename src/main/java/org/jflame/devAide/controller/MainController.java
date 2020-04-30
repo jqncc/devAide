@@ -1,10 +1,8 @@
 package org.jflame.devAide.controller;
 
-import java.util.Optional;
-
 import org.controlsfx.control.StatusBar;
 import org.jflame.commons.util.StringHelper;
-import org.jflame.devAide.Globals;
+import org.jflame.devAide.AppContext;
 import org.jflame.devAide.model.UIModel;
 import org.jflame.devAide.util.FxUtils;
 import org.slf4j.Logger;
@@ -16,8 +14,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
@@ -31,9 +32,9 @@ import javafx.scene.web.WebView;
  *
  * @author yucan.zhang
  */
-public class MainView {
+public class MainController {
 
-    private final Logger logger = LoggerFactory.getLogger(MainView.class);
+    private final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     @FXML
     private TabPane mainTab;
@@ -44,14 +45,15 @@ public class MainView {
     @FXML
     private ListView<UIModel> lstViewTool;
 
-    public MainView() {
+    public MainController() {
 
     }
 
     @FXML
-    private void initialize() {
+    protected void initialize() {
         initToolListView();
         // initKnowHomePage();
+        initStatusBar();
     }
 
     /**
@@ -82,9 +84,9 @@ public class MainView {
      * 初始开发工具列表
      */
     private void initToolListView() {
-        UIModel qrCodeToolModel = new UIModel("二维码工具", "QRCODE", "abc");
+        UIModel qrCodeToolModel = new UIModel("条码生成器", "QRCODE", "qrcodeTool");
         UIModel regToolModel = new UIModel("正则表达式", "EURO");
-        UIModel jsonToolModel = new UIModel("JSON查看器", "FILE_TEXT", "jsonVIewer");
+        UIModel jsonToolModel = new UIModel("代码格式化", "FILE_TEXT", "formatTool");
         UIModel cronToolModel = new UIModel("CRON表达式", "COPYRIGHT");
         ObservableList<UIModel> lstViewToolData = FXCollections.observableArrayList(qrCodeToolModel, regToolModel,
                 jsonToolModel, cronToolModel);
@@ -105,22 +107,39 @@ public class MainView {
                         }
                     }
                     if (!isExist && StringHelper.isNotEmpty(new_val.getAction())) {
-                        Optional<Parent> toolPaneOpt = FxUtils.loadFXML(new_val.getAction());
-                        if (toolPaneOpt.isPresent()) {
-                            Tab toolTab = new Tab(new_val.getText());
-                            toolTab.setUserData(new_val.getText());
-                            toolTab.setGraphic(Globals.FONT_AWESOME.create(new_val.getIcon())
-                                    .size(9));
-                            toolTab.setClosable(true);
-                            toolTab.setContent(toolPaneOpt.get());
-                            mainTab.getTabs()
-                                    .add(toolTab);
-                            mainTab.getSelectionModel()
-                                    .select(toolTab);
-                        }
+                        Parent toolPaneOpt = FxUtils.loadFXML(new_val.getAction());
+                        Tab toolTab = new Tab(new_val.getText());
+                        toolTab.setUserData(new_val.getText());
+                        toolTab.setGraphic(AppContext.FONT_AWESOME.create(new_val.getIcon())
+                                .size(9));
+                        toolTab.setClosable(true);
+                        toolTab.setContent(toolPaneOpt);
+                        mainTab.getTabs()
+                                .add(toolTab);
+                        mainTab.getSelectionModel()
+                                .select(toolTab);
                     }
 
                 });
+    }
+
+    private void initStatusBar() {
+        Hyperlink linkGit = new Hyperlink("Github");
+        linkGit.getStyleClass()
+                .add("gitlink");
+        linkGit.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                AppContext.getInstance()
+                        .getApplication()
+                        .getHostServices()
+                        .showDocument("https://github.com/jqncc/devAide");
+            }
+        });
+
+        statusBar.getRightItems()
+                .add(linkGit);
     }
 
     static class ToolListViewCell extends ListCell<UIModel> {
@@ -131,10 +150,10 @@ public class MainView {
             if (!empty && item != null) {
                 setText(item.getText());
                 if (item.getIcon() != null) {
-                    setGraphic(Globals.FONT_AWESOME.create(item.getIcon())
+                    setGraphic(AppContext.FONT_AWESOME.create(item.getIcon())
                             .size(14));
                 } else {
-                    setGraphic(Globals.FONT_AWESOME.create("WRENCH"));
+                    setGraphic(AppContext.FONT_AWESOME.create("WRENCH"));
                 }
             }
 

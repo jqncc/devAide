@@ -26,7 +26,7 @@ public class App extends Application {
         Parent parent = FxUtils.loadFXML("main");
         MyDecorator decorator = MyDecorator.create(stage, parent, "DevAide - 开发辅助工具", "/images/logo16X16.png");
 
-        Scene scene = new Scene(decorator, 1366, 768);
+        Scene scene = new Scene(decorator, 1366, 800);
         // JFoenixResources
         // String css_jfoenix_font = ResourceUtils.absUrl("/css/jfoenix-fonts.css");
         // String css_jfoenix_design = ResourceUtils.absUrl("/css/jfoenix-design.css");

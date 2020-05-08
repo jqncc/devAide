@@ -62,16 +62,6 @@ public final class AppContext {
         return instance;
     }
 
-    /* public static void main(String[] args) throws URISyntaxException {
-        String a = Paths.get(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("")
-                .toURI())
-                .toString();
-        System.out.println(a);
-        System.out.println(Paths.get(a, "/data"));
-    }*/
-
     public static void addStyleFile(String styleFile) {
         styleFiles.add(styleFile);
     }
@@ -118,4 +108,11 @@ public final class AppContext {
         }
     }
 
+    public static void main(String[] args) {
+        // System.out.println(Integer.valueOf("ffffffff", 16));
+        System.out.println(Long.decode("0xffffffff")
+                .intValue());
+        System.out.println(Long.decode("0x000000ff")
+                .intValue());
+    }
 }

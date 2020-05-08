@@ -7,13 +7,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 
 /**
- * 提供一些控件的创建方法
+ * 提供一些控件的便捷方法
  *
  * @author yucan.zhang
  */
-public final class UIComponentCreater {
+public final class UIComponents {
 
     /**
      * 用给定的图片路径创建一个ImageView
@@ -86,4 +87,23 @@ public final class UIComponentCreater {
         return new Alert(AlertType.ERROR, errorMsg, ButtonType.OK);
     }
 
+    /**
+     * 返回Color所表示颜色ARGB模式的int值
+     * 
+     * @param color Color
+     * @return
+     */
+    public static int colorToArgb(Color color) {
+        int r = (int) Math.round(color.getRed() * 255.0);
+        int g = (int) Math.round(color.getGreen() * 255.0);
+        int b = (int) Math.round(color.getBlue() * 255.0);
+        int o = (int) Math.round(color.getOpacity() * 255.0);
+        String hexColor = String.format("%02x%02x%02x%02x", o, r, g, b);
+        return Integer.parseUnsignedInt(hexColor, 16);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Color.valueOf("0x000001ff"));
+        System.out.println(Color.BLACK);
+    }
 }

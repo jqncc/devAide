@@ -34,30 +34,34 @@ public class FileField extends StackPane implements Initializable {
     private Button fileButton;
 
     private FileChooser fileChooser = new FileChooser();
-    private List<File> selectedFiles;
     // private BooleanProperty multipleFile = new SimpleBooleanProperty(this, "multipleFile", false);
     private boolean multipleFile = false;// 是否可多选择文件
 
     public FileField() {
         getStyleClass().add("file-field");
         FxUtils.loadFXML("fileField", this, this);
-        super.setStyle("-fx-border-width:0");
     }
 
     @FXML
     protected void handleFileChoose(ActionEvent event) {
+        List<File> selectedFiles = null;
         if (isMultipleFile()) {
             selectedFiles = fileChooser.showOpenMultipleDialog(super.getScene().getWindow());
         } else {
             File selectedFile = fileChooser.showOpenDialog(super.getScene().getWindow());
             if (selectedFile != null) {
-                getSelectedFiles().add(selectedFile);
+                selectedFiles = List.of(selectedFile);
             }
         }
+        List<String> selectedFilePath = null;
+        List<String> oldselectedFilePath = getSelectedFilePaths();
         if (CollectionHelper.isNotEmpty(selectedFiles)) {
-            selectedFileProperty().set(selectedFiles);
-            fileText.setText(StringHelper.join(getSelectedFilePaths()));
+            selectedFilePath = extractFilePaths(selectedFiles);
         }
+        if (!CollectionHelper.elementEquals(oldselectedFilePath, selectedFilePath)) {
+            selectedFileProperty().set(selectedFiles);
+        }
+        fileText.setText(StringHelper.join(selectedFilePath));
     }
 
     private ObjectProperty<List<File>> selectedFileProperty;
@@ -75,11 +79,8 @@ public class FileField extends StackPane implements Initializable {
      * @return
      */
     public String getFirstSelectedFilePath() {
-        if (CollectionHelper.isNotEmpty(selectedFiles)) {
-            return selectedFiles.get(0)
-                    .getPath();
-        }
-        return null;
+        File f = getFirstSelectedFile();
+        return f == null ? null : f.getPath();
     }
 
     /**
@@ -88,10 +89,8 @@ public class FileField extends StackPane implements Initializable {
      * @return File
      */
     public File getFirstSelectedFile() {
-        if (CollectionHelper.isNotEmpty(selectedFiles)) {
-            return selectedFiles.get(0);
-        }
-        return null;
+        List<File> selectedFiles = selectedFileProperty().getValue();
+        return CollectionHelper.isEmpty(selectedFiles) ? null : selectedFiles.get(0);
     }
 
     /**
@@ -100,13 +99,14 @@ public class FileField extends StackPane implements Initializable {
      * @return
      */
     public List<File> getSelectedFiles() {
-        if (selectedFiles == null) {
-            selectedFiles = new ArrayList<File>();
-        }
-        return selectedFiles;
+        return selectedFileProperty().getValue();
     }
 
     private List<String> getSelectedFilePaths() {
+        return extractFilePaths(selectedFileProperty().getValue());
+    }
+
+    private List<String> extractFilePaths(List<File> selectedFiles) {
         List<String> paths = new ArrayList<>();
         if (CollectionHelper.isNotEmpty(selectedFiles)) {
             selectedFiles.forEach(f -> {
@@ -150,7 +150,6 @@ public class FileField extends StackPane implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO Auto-generated method stub
 
     }
 

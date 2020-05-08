@@ -15,7 +15,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.jflame.commons.util.StringHelper;
 import org.jflame.commons.valid.ValidatorHelper;
-import org.jflame.devAide.util.UIComponentCreater;
+import org.jflame.devAide.util.UIComponents;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -60,7 +60,7 @@ public class FormatToolController implements Initializable {
                     formattedStr = srcStr;
                 }
             } catch (Exception e) {
-                UIComponentCreater.createExDialog("格式有错,无法格式化", e)
+                UIComponents.createExDialog("格式有错,无法格式化", e)
                         .show();
             }
         }

@@ -7,7 +7,7 @@ package org.jflame.devAide.component;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jflame.devAide.util.UIComponentCreater;
+import org.jflame.devAide.util.UIComponents;
 
 /*
  * import com.jfoenix.controls.JFXButton; import com.jfoenix.controls.JFXDecorator; import com.jfoenix.svg.SVGGlyph;
@@ -671,7 +671,7 @@ public class MyDecorator extends VBox {
         decorator.setCustomMaximize(true);
         decorator.setTitle(title);
         if (icon != null) {
-            decorator.setGraphic(UIComponentCreater.createImageView(icon, 16, 16));
+            decorator.setGraphic(UIComponents.createImageView(icon, 16, 16));
         }
         return decorator;
     }

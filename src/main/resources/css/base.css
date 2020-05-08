@@ -8,50 +8,108 @@
     -fx-text-fill:#333;
 }
 .text-area,.text-area:focused{-fx-background-radius: 0;-fx-background-insets: -0.1, 1, 1;}
-#mainTab {
-    -fx-background-color: #fff;
+.text-field{ -fx-background-color:#fff;-fx-background-insets: 0;-fx-background-radius: 0;}
+.text-field{
+    -fx-border-width:1px;
+    -fx-border-color:-fx-text-box-border;
+ }
+ .button{
+	-fx-border-radius:0;
+	-fx-background-radius:0;
 }
-
-#statusBar{
-	-fx-background-color: #333;
-	-fx-text-fill:#ccc; 
-	-fx-pref-height:24px; 
-	-fx-pref-width:1000;
-	-fx-font-size:9px;
-	-fx-padding:2px 10px;
-}
-.gitlink{-fx-text-fill:#999}
-.gitlink:hover{-fx-text-fill:#ccc}
-/* 修改顶栏的背景颜色 */
-#mainTab>*.tab-header-area>*.tab-header-background
+/* tabpane */
+.tab-pane{-fx-background-color: #fff;}
+.tab-pane >*.tab-header-area>*.tab-header-background
 {
-    -fx-background-color:#f5f5f5;
+    -fx-background-color:transparent;
+    -fx-border-width:0 0 1px 0;
+    -fx-border-color:#ccc;
 }
-
-/* 修改Tab中文本的颜色 */
+.tab-pane:top > .tab-header-area {
+    -fx-padding: 0.416667em 0.166667em 0.0em 0; /* 5 2 0 10 */
+}
+/* tab文本颜色 */
 .tab-label {
-    -fx-text-fill: #999; -fx-font-size:12px;
+    -fx-text-fill: #666; 
+    -fx-font-size:12px;
 }
 /* 子代选择器，Tab选中的时候选择其子元素tab-label */
 .tab:selected .tab-label {
-    -fx-text-fill: #666;
+    -fx-text-fill: #333;
 }
-#mainTab .tab-content-area{-fx-padding:15px;}
-.tab{-fx-border-width:0;-fx-background-color: #eee;}
-
+.tab{
+	-fx-border-width:0;
+	-fx-border-radius: 0px;
+	-fx-background-color: #fff;
+	-fx-background-radius:0;
+}
 /* tab选中时设置背景颜色 */
 .tab:selected {
     -fx-background-color: #fff;
     -fx-border-radius: 0px;
-    -fx-border-width: 3px 0 0 0;
+    -fx-border-width: 0 0 2px 0;
     -fx-border-color: #5CB85C;
 }
 /* Tab选中的时候选中其边框并修改样式 */
 .tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
     -fx-border-radius: 0px;
     -fx-border-width: 0;
-    -fx-border-color: #5CB85C;
     -fx-text-fill:#333;
+}
+.tab-pane > .tab-content-area{-fx-padding:10px;}
+
+.combo-box-base  {
+    -fx-background-color: #fff;
+    -fx-background-radius: 5, 5, 4, 3;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-padding: 0;
+    -fx-border-width:1px;
+    -fx-border-color:#ccc;
+}
+
+.spinner {
+    -fx-background-color: #fff;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width:1px;
+    -fx-border-color:#ccc;
+}
+.spinner:focused,
+.spinner:contains-focus {
+    -fx-background-color:#fff;
+    -fx-background-insets:0;
+    -fx-background-radius:0;
+}
+.spinner > .text-field {
+    -fx-background-color: #fff;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width:0;
+}
+.spinner .increment-arrow-button {
+    -fx-background-color: #f5f5f5;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.333em 0.666em 0.333em 0.666em; /* 4 8 4 8 */
+}
+.spinner .decrement-arrow-button {
+    -fx-background-color: #f5f5f5;
+    -fx-background-insets: 0;
+    -fx-background-radius:0;
+    -fx-padding: 0.250em 0.666em 0.5em 0.666em; /* 3 8 6 8 */
+}
+
+#mainTab > .tab-header-area > .tab-header-background{
+    -fx-background-color:#f5f5f5;
+    -fx-border-width:0;
+}
+#mainTab > .tab-header-area > .headers-region > .tab{
+	-fx-background-color: #eee;
+}
+#mainTab > .tab-content-area{-fx-padding:15px;}
+#mainTab>.tab-header-area> .headers-region >.tab:selected {
+    -fx-border-width: 3px 0 0 0;
+    -fx-background-color: #fff;
 }
 
 .jfx-decorator {
@@ -119,6 +177,18 @@
 .exception-dialog{-fx-font-size:12px;}
 .exception-dialog .text-area{-fx-font-size:10px;}
 
+#statusBar{
+	-fx-background-color: #333;
+	-fx-text-fill:#ccc; 
+	-fx-pref-height:24px; 
+	-fx-pref-width:1000;
+	-fx-font-size:9px;
+	-fx-padding:2px 10px;
+}
+.gitlink{-fx-text-fill:#999}
+.gitlink:hover{-fx-text-fill:#ccc}
+
+
 /*多行输入框字体样式
  * .text-area {-fx-font-size:14px;-fx-text-fill:red} */
 .dialog-pane{-fx-border-color:#ccc;-fx-border-width: 1px;-fx-background-color:#fff;}
@@ -126,6 +196,16 @@
 .dialog-pane .content {-fx-border-color: #ccc;-fx-border-width: 1px}
 .dialog-pane .button-bar  {-fx-border-color: #666;-fx-border-width: 1px}
  */
-
+/* plugin style */
 #qrcodeBox{-fx-border-color:#ccc;-fx-border-width: 1px;}
 #qrcodeBox .label{-fx-text-fill:#999}
+#barcodeBox{
+	-fx-border-width: 1px;
+    -fx-border-color: #ccc;
+    -fx-background-color:#fff;
+  }
+
+.file-field {-fx-border-width:0}
+.file-field .button{-fx-border-width:1;-fx-border-color:#ccc;-fx-background-color:#f5f5f5;-fx-text-fill:#333}
+.file-field .button:hover,.file-field .button:focused{-fx-background-color: #ddd;}
+

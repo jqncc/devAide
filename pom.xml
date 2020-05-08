@@ -61,10 +61,10 @@
 			<version>${qrcode.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>javase</artifactId>
-            <version>${qrcode.version}</version>
-        </dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>${qrcode.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -82,25 +82,55 @@
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.3</version>
-				<configuration>
-					<options>
-						<option>-Djava.library.path=c:\tmp</option>
-						<option>--add-exports</option>
-						<option>javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</option>
-						<option>--add-exports</option>
-						<option>javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</option>
-						<option>--add-exports</option>
-						<option>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</option>
-						<option>--add-exports</option>
-						<option>javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</option>
-						<option>--add-exports</option>
-						<option>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</option>
-						<option>--add-exports</option>
-						<option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
-					</options>
-					<mainClass>org.jflame.devAide.App</mainClass>
-					<executable>D:/Java/jdk-11.0.3/bin/java</executable>
-				</configuration>
+				<executions>
+					<execution>
+						<!-- Default configuration for running -->
+						<id>default-cli</id>
+						<configuration>
+							<options>
+								<option>-Djava.library.path=c:\tmp</option>
+								<option>--add-exports</option>
+								<option>javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
+							</options>
+							<mainClass>org.jflame.devAide.App</mainClass>
+							<executable>D:/Java/jdk-11.0.3/bin/java</executable>
+						</configuration>
+					</execution>
+					<execution>
+						<!-- Configuration for debugging -->
+						<id>debug</id>
+						<configuration>
+							<options>
+								<option>-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=localhost:8000</option>
+								<option>-Djava.library.path=c:\tmp</option>
+								<option>--add-exports</option>
+								<option>javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
+							</options>
+							<mainClass>org.jflame.devAide.App</mainClass>
+							<executable>D:/Java/jdk-11.0.3/bin/java</executable>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

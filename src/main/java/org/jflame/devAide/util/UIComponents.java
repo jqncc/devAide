@@ -59,6 +59,10 @@ public final class UIComponents {
         return dlg;
     }
 
+    public static void showExDialog(String errorMsg, Exception e) {
+        createExDialog(errorMsg, e).show();
+    }
+
     public static Alert createAlert(String errorMsg) {
         Alert alert = new Alert(AlertType.INFORMATION, errorMsg, ButtonType.OK);
         /* alert.getDialogPane()
@@ -83,8 +87,12 @@ public final class UIComponents {
         return alert;
     }
 
-    public static Alert createErrorAlert(String errorMsg) {
-        return new Alert(AlertType.ERROR, errorMsg, ButtonType.OK);
+    public static void showWarnAlert(String warnMsg) {
+        new Alert(AlertType.WARNING, warnMsg, ButtonType.OK).show();
+    }
+
+    public static void showErrorAlert(String errorMsg) {
+        new Alert(AlertType.ERROR, errorMsg, ButtonType.OK).show();
     }
 
     /**

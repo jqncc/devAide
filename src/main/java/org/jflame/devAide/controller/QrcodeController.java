@@ -27,25 +27,33 @@ import org.jflame.commons.common.bean.pair.NameValuePair;
 import org.jflame.commons.util.DateHelper;
 import org.jflame.commons.util.NumberHelper;
 import org.jflame.commons.util.StringHelper;
+import org.jflame.commons.util.json.JsonHelper;
 import org.jflame.commons.valid.ValidatorHelper;
 import org.jflame.devAide.AppContext;
 import org.jflame.devAide.component.FileField;
 import org.jflame.devAide.component.MyGraphicValidationDecoration;
 import org.jflame.devAide.component.convertor.IntFieldFormatter;
 import org.jflame.devAide.component.convertor.NVPairConverter;
+import org.jflame.devAide.model.BarcodeInfo;
 import org.jflame.devAide.util.UIComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.BinaryBitmap;
 import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatReader;
 import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -59,6 +67,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
@@ -68,6 +77,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.util.Duration;
 
 public class QrcodeController {
 
@@ -102,10 +113,15 @@ public class QrcodeController {
     private Button btnOpenBarcode;
     @FXML
     private CheckBox chbxLogoBorder;
+    @FXML
+    private ListView<BarcodeInfo> historyView;
+
+    private Tooltip imgViewTip;
 
     private final Path qrcodeCacheDir;
-    private final String IMG_FORMAT_JPG = "jpg";
+    private final Path recordPath;
 
+    private final String IMG_FORMAT_JPG = "jpg";
     private final int QRCODE_DEFAULT_WIDTH = 250;// 二维码默认尺寸
     private final int LOGO_DEFAULT_WIDTH = QRCODE_DEFAULT_WIDTH / 5; // logo默认尺寸
     private final float BARCODE_ASPECT_RATIO = 0.5f;// 条形码宽高比2:1
@@ -113,9 +129,30 @@ public class QrcodeController {
     private NVPairConverter cbxNVPairConverter = new NVPairConverter();
     private ValidationSupport validationSupport = new ValidationSupport();
 
+    private List<NameValuePair> ecLevels;
+    private List<NameValuePair> barcodeTypes;
+    private ObservableList<BarcodeInfo> barcodeRecords = FXCollections.observableArrayList();
+
     public QrcodeController() {
         qrcodeCacheDir = Paths.get(AppContext.getInstance()
-                .projDataDir(), "qrcode");
+                .projDataDir(), "barcode");
+        recordPath = Paths.get(qrcodeCacheDir.toString(), "record.json");
+
+        ecLevels = NameValuePair.newPairs()
+                .add("L(7%)", "L")
+                .add("M(15%)", "M")
+                .add("Q(25%)", "Q")
+                .add("H(30%)", "H")
+                .toList();
+        barcodeTypes = NameValuePair.newPairs()
+                .add("Qrcode(二维码)", "QR_CODE")
+                .add("DataMatrix(二维码)", "DATA_MATRIX")
+                .add("MaxiCode(二维码)", "DATA_MATRIX")
+                .add("PDF417(二维码)", "PDF_417")
+                .add("Code39(条形码)", "CODE_39")
+                .add("Code128(条形码)", "CODE_128")
+                .add("Code93(条形码)", "CODE_93")
+                .toList();
     }
 
     @FXML
@@ -140,24 +177,9 @@ public class QrcodeController {
         // 容错等级下拉框数据初始
         Tooltip faultTip = new Tooltip("二维码容错等级分为：L(7%)、M(15%)、Q(25%)、H(30%)四级,容错率越高则二维码图片能被遮挡的部分越多");
         cbxFault.setTooltip(faultTip);
-        List<NameValuePair> ecLevels = NameValuePair.newPairs()
-                .add("L(7%)", "L")
-                .add("M(15%)", "M")
-                .add("Q(25%)", "Q")
-                .add("H(30%)", "H")
-                .toList();
         bindNVPairToCombox(cbxFault, ecLevels, 2, 4);
 
         // 条码码制下拉框数据初始
-        List<NameValuePair> barcodeTypes = NameValuePair.newPairs()
-                .add("Qrcode(二维码)", "QR_CODE")
-                .add("DataMatrix(二维码)", "DATA_MATRIX")
-                .add("MaxiCode(二维码)", "DATA_MATRIX")
-                .add("PDF417(二维码)", "PDF_417")
-                .add("Code39(条形码)", "CODE_39")
-                .add("Code128(条形码)", "CODE_128")
-                .add("Code93(条形码)", "CODE_93")
-                .toList();
         bindNVPairToCombox(cbxBarcodeType, barcodeTypes, 0, 7);
         cbxBarcodeType.getSelectionModel()
                 .selectedItemProperty()
@@ -179,6 +201,29 @@ public class QrcodeController {
         spnLogoSize.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(20, 400, LOGO_DEFAULT_WIDTH));
         spnLogoSize.getEditor()
                 .setTextFormatter(new IntFieldFormatter());
+
+        historyView.setItems(barcodeRecords);
+        Platform.runLater(() -> {
+            if (!Files.exists(recordPath)) {
+                try {
+                    Files.createFile(recordPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                String recordStr;
+                try {
+                    recordStr = Files.readString(recordPath);
+                    if (StringHelper.isNotEmpty(recordStr)) {
+                        List<BarcodeInfo> lst = JsonHelper.parseList(recordStr, BarcodeInfo.class);
+                        barcodeRecords.addAll(lst);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     private void initCodeContentValiation() {
@@ -222,7 +267,7 @@ public class QrcodeController {
      * @param event
      */
     @FXML
-    protected void handleGenerateQRcode(ActionEvent event) {
+    protected void handleCreateBarcode(ActionEvent event) {
         if (StringHelper.isEmpty(barcodeText.getText())) {
             barcodeText.requestFocus();
             return;
@@ -234,8 +279,11 @@ public class QrcodeController {
         if (validationSupport.isInvalid()) {
             return;
         }
+        BarcodeInfo codeInfo = new BarcodeInfo();
+        codeInfo.setFormat(IMG_FORMAT_JPG);
         String content = barcodeText.getText()
                 .strip();
+        codeInfo.setContent(content);
         BarcodeFormat barcodeType = BarcodeFormat.valueOf(cbxBarcodeType.getValue()
                 .getValue());
         File logoPath = logoField.getFirstSelectedFile();
@@ -255,7 +303,7 @@ public class QrcodeController {
                 logoSize = LOGO_DEFAULT_WIDTH;
             }
             if (logoSize >= barcodeWidth * 0.5) {
-                UIComponents.createAlert("Logo尺寸过大影响识别率真,请重新调整大小");
+                UIComponents.showWarnAlert("Logo尺寸过大影响识别率真,请重新调整大小");
                 return;
             }
             hints = new HashMap<>();
@@ -270,6 +318,7 @@ public class QrcodeController {
             }
             hints.put(EncodeHintType.ERROR_CORRECTION, ecLevel);
             hints.put(EncodeHintType.MARGIN, 1);
+            codeInfo.setErrorCorrectionLevel(ecLevel.name());
         } else {
             barcodeHegiht = (int) (barcodeWidth * BARCODE_ASPECT_RATIO);
         }
@@ -277,6 +326,13 @@ public class QrcodeController {
         Color fgColor = cpickerBarcodeFg.getValue();
         int offColor = UIComponents.colorToArgb(cpickerBarcodeBg.getValue());// 背景色
         int onColor;
+
+        codeInfo.setWidth(barcodeWidth);
+        codeInfo.setHeight(barcodeHegiht);
+        codeInfo.setBgColor(cpickerBarcodeBg.getValue()
+                .toString());
+        codeInfo.setFgColor(cpickerBarcodeFg.getValue()
+                .toString());
         BitMatrix bitMatrix;
         try {
             bitMatrix = new MultiFormatWriter().encode(content, barcodeType, barcodeWidth, barcodeHegiht, hints);
@@ -292,13 +348,19 @@ public class QrcodeController {
                         matrixToImageConfig);
                 BufferedImage bufferedImage = drawLogoMatrix(barcodeBufferedImage, logoPath, logoSize,
                         chbxLogoBorder.isSelected());
+                codeInfo.setLogoPath(logoPath.toString());
+                codeInfo.setLogoSize(logoSize);
                 ImageIO.write(bufferedImage, IMG_FORMAT_JPG, newBarcodePath.toFile());
             } else {
                 onColor = UIComponents.colorToArgb(cpickerBarcodeFg.getValue());
                 MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(onColor, offColor);
                 MatrixToImageWriter.writeToPath(bitMatrix, IMG_FORMAT_JPG, newBarcodePath, matrixToImageConfig);
             }
+
             showBarcodeImage(newBarcodePath, barcodeWidth, barcodeHegiht);
+            codeInfo.setBarcodePath(newBarcodePath.toString());
+            codeInfo.setCreateTime(LocalDateTime.now());
+            barcodeRecords.add(codeInfo);
         } catch (WriterException | IOException | IllegalArgumentException e) {
             UIComponents.createExDialog("生成条码异常", e)
                     .show();
@@ -324,11 +386,41 @@ public class QrcodeController {
         }
     }
 
+    private FileChooser parseFileChooser;
+
+    /**
+     * 条码解码事件
+     * 
+     * @param event
+     */
     @FXML
     protected void handleParseBarcode(ActionEvent event) {
-        FileChooser chooser = new FileChooser();
-        chooser.showOpenDialog(lblParser.getScene()
+        if (parseFileChooser == null) {
+            parseFileChooser = new FileChooser();
+            parseFileChooser.getExtensionFilters()
+                    .add(new ExtensionFilter("图片", "*.png", "*.jpg", "*.gif"));
+        }
+        File selectedBarcodeFile = parseFileChooser.showOpenDialog(lblParser.getScene()
                 .getWindow());
+        if (selectedBarcodeFile != null) {
+            MultiFormatReader formatReader = new MultiFormatReader();
+            // 读取指定的二维码文件
+            BufferedImage bufferedImage;
+            try {
+                bufferedImage = ImageIO.read(selectedBarcodeFile);
+                BinaryBitmap binaryBitmap = new BinaryBitmap(
+                        new HybridBinarizer(new BufferedImageLuminanceSource(bufferedImage)));
+                com.google.zxing.Result result = formatReader.decode(binaryBitmap);
+
+                barcodeText.setText(result.getText());
+                barcodeText.selectAll();
+                bufferedImage.flush();
+                parseFileChooser.setInitialDirectory(selectedBarcodeFile.getParentFile());
+            } catch (IOException | NotFoundException e) {
+                UIComponents.createExDialog("解码失败", e)
+                        .show();
+            }
+        }
 
     }
 
@@ -348,34 +440,32 @@ public class QrcodeController {
                                         .toURL()
                                         .toExternalForm());
                     } catch (IOException e1) {
-                        UIComponents.createErrorAlert("当前操作系统不支持该操作,请复制路径打开")
-                                .show();
+                        UIComponents.showErrorAlert("当前操作系统不支持该操作,请复制路径打开");
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("打开条码目录失败" + currentBarPath, e);
             }
         }
     }
-
-    private Tooltip pathTip;
 
     private void showBarcodeImage(Path barcodePath, int barcodeWidth, int barcodeHegiht) throws MalformedURLException {
         lblNoCodeImageMsg.setVisible(false);
 
         codeImageViwer.setFitWidth(barcodeWidth);
         codeImageViwer.setFitHeight(barcodeHegiht);
-        codeImageViwer.setVisible(true);
         codeImageViwer.setImage(new Image(barcodePath.toUri()
                 .toURL()
                 .toExternalForm()));
         codeImageViwer.setUserData(barcodePath);
-        if (pathTip == null) {
-            pathTip = new Tooltip();
-            Tooltip.install(codeImageViwer, pathTip);
+        if (imgViewTip == null) {
+            imgViewTip = new Tooltip();
+            imgViewTip.setShowDelay(Duration.millis(100d));
+            Tooltip.install(codeImageViwer, imgViewTip);
         }
-        pathTip.setText(codeImageViwer.getUserData()
+        imgViewTip.setText(codeImageViwer.getUserData()
                 .toString());
+        codeImageViwer.setVisible(true);
     }
 
     /**

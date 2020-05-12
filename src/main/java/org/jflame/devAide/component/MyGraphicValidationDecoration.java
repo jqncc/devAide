@@ -42,7 +42,7 @@ public class MyGraphicValidationDecoration extends GraphicValidationDecoration {
         Tooltip tooltip = new Tooltip(message.getText());
         tooltip.setOpacity(.9);
         tooltip.setAutoFix(true);
-        tooltip.setShowDelay(Duration.millis(50d));
+        tooltip.setShowDelay(Duration.millis(100d));
         tooltip.getStyleClass()
                 .add(getStyleClassBySeverity(message.getSeverity()));
         return tooltip;

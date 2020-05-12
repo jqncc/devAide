@@ -209,7 +209,7 @@
     -fx-background-color:#fff;
   }
 #btnCreate{-fx-pref-width:100;-fx-pref-height:32px;}
-#lblbarcodeParser{-fx-graphic:url(/images/scanning.png);}
+#lblbarcodeParser{-fx-graphic:url(/images/scanning.png);-fx-text-fill:#333}
 .valid_warning_tip,.valid_info_tip,.valid_error_tip{
 	-fx-effect: dropshadow(three-pass-box, rgba(180,180,180,0.5), 2, 0, 0, 2);
 	-fx-padding: 5; 

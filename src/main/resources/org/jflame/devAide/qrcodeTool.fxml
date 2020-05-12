@@ -48,12 +48,12 @@
 				<Separator layoutX="20.0" layoutY="33.0" maxWidth="1.7976931348623157E308" prefHeight="0.0"
 					prefWidth="265.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
 				<Hyperlink fx:id="lblParser" id="lblbarcodeParser" layoutX="262.0" layoutY="10.0" text="解码"
-					AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0" />
+					AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0" onAction="#handleParseBarcode" />
 				<TextArea fx:id="barcodeText" layoutX="50.0" layoutY="66.0" prefHeight="195.0" prefWidth="278.0"
 					promptText="请输入条码内容" wrapText="true" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
 					AnchorPane.topAnchor="46.0" />
 				<Button fx:id="btnCreate" id="btnCreate" layoutX="249.0" layoutY="546.0" mnemonicParsing="false"
-					onAction="#handleGenerateQRcode" styleClass="flatBtn,btn-info" text="生成条码" textAlignment="CENTER"
+					onAction="#handleCreateBarcode" styleClass="flatBtn,btn-info" text="生成条码" textAlignment="CENTER"
 					AnchorPane.rightAnchor="10.0" />
 				<TabPane layoutX="50.0" layoutY="276.0" prefHeight="254.0" prefWidth="278.0" tabClosingPolicy="UNAVAILABLE"
 					tabMinWidth="50.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="256.0">
@@ -161,7 +161,7 @@
 				<Label layoutX="14.0" layoutY="14.0" text="最近生成" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0" />
 				<Separator layoutX="14.0" layoutY="28.0" prefHeight="3.0" prefWidth="287.0" AnchorPane.leftAnchor="0.0"
 					AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
-				<ListView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="540.0"
+				<ListView fx:id="historyView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="540.0"
 					prefWidth="264.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="46.0">
 				</ListView>
 			</children>

@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -52,8 +53,10 @@ public class MainController {
     @FXML
     protected void initialize() {
         initToolListView();
+        initMainTabEvent();
         // initKnowHomePage();
         initStatusBar();
+
     }
 
     /**
@@ -77,11 +80,12 @@ public class MainController {
                     }
                 });
         webEngine.load("http://www.hao123.com");
+        // AppContext.getInstance().getApplication().getHostServices().showDocument("https://www.hao123.com");调用系统浏览器打开网页
 
     }
 
     /**
-     * 初始开发工具列表
+     * 初始开发工具菜单列表
      */
     private void initToolListView() {
         UIModel qrCodeToolModel = new UIModel("条码生成器", "QRCODE", "qrcodeTool");
@@ -96,20 +100,42 @@ public class MainController {
                 .selectedItemProperty()
                 .addListener((ObservableValue<? extends UIModel> ov, UIModel old_val, UIModel new_val) ->
                 {
+                    if (new_val == null) {
+                        return;
+                    }
                     boolean isExist = false;
+                    if (mainTab.getSelectionModel()
+                            .getSelectedItem()
+                            .getUserData() == new_val) {
+                        return;
+                    }
                     ObservableList<Tab> tabs = mainTab.getTabs();
                     for (Tab tab : tabs) {
-                        if (new_val.getText()
-                                .equals(tab.getUserData())) {
+                        if (new_val.equals(tab.getUserData())) {
                             isExist = true;
                             mainTab.getSelectionModel()
                                     .select(tab);
+                            break;
                         }
                     }
                     if (!isExist && StringHelper.isNotEmpty(new_val.getAction())) {
                         Parent toolPaneOpt = FxUtils.loadFXML(new_val.getAction());
                         Tab toolTab = new Tab(new_val.getText());
-                        toolTab.setUserData(new_val.getText());
+                        toolTab.setOnClosed(new EventHandler<Event>() {
+
+                            @Override
+                            public void handle(Event event) {
+                                Tab t = (Tab) event.getSource();
+                                if (lstViewTool.getSelectionModel()
+                                        .getSelectedItem() == t.getUserData()) {
+                                    lstViewTool.getSelectionModel()
+                                            .clearSelection(lstViewTool.getSelectionModel()
+                                                    .getSelectedIndex());
+                                }
+
+                            }
+                        });
+                        toolTab.setUserData(new_val);
                         toolTab.setGraphic(AppContext.FONT_AWESOME.create(new_val.getIcon())
                                 .size(9));
                         toolTab.setClosable(true);
@@ -121,6 +147,7 @@ public class MainController {
                     }
 
                 });
+
     }
 
     private void initStatusBar() {
@@ -140,6 +167,26 @@ public class MainController {
 
         statusBar.getRightItems()
                 .add(linkGit);
+    }
+
+    /**
+     * mainTab选项卡切换事件,切换左边菜单树关联切换
+     */
+    private void initMainTabEvent() {
+        mainTab.getSelectionModel()
+                .selectedItemProperty()
+                .addListener(new ChangeListener<Tab>() {
+
+                    @Override
+                    public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+                        if (lstViewTool.getSelectionModel()
+                                .getSelectedItem() != newValue.getUserData()) {
+                            lstViewTool.getSelectionModel()
+                                    .select((UIModel) newValue.getUserData());
+                        }
+                    }
+
+                });
     }
 
     static class ToolListViewCell extends ListCell<UIModel> {

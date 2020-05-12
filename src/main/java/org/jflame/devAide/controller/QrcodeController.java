@@ -1,11 +1,13 @@
 package org.jflame.devAide.controller;
 
 import java.awt.BasicStroke;
+import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,13 +20,19 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.controlsfx.validation.ValidationResult;
+import org.controlsfx.validation.ValidationSupport;
+import org.controlsfx.validation.Validator;
 import org.jflame.commons.common.bean.pair.NameValuePair;
 import org.jflame.commons.util.DateHelper;
 import org.jflame.commons.util.NumberHelper;
 import org.jflame.commons.util.StringHelper;
+import org.jflame.commons.valid.ValidatorHelper;
 import org.jflame.devAide.AppContext;
 import org.jflame.devAide.component.FileField;
-import org.jflame.devAide.component.IntFieldFormatter;
+import org.jflame.devAide.component.MyGraphicValidationDecoration;
+import org.jflame.devAide.component.convertor.IntFieldFormatter;
+import org.jflame.devAide.component.convertor.NVPairConverter;
 import org.jflame.devAide.util.UIComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +53,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -56,7 +67,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.util.StringConverter;
+import javafx.stage.FileChooser;
 
 public class QrcodeController {
 
@@ -84,16 +95,23 @@ public class QrcodeController {
     @FXML
     private Spinner<Integer> spnLogoSize;
     @FXML
-    private Label lblParser;
+    private Hyperlink lblParser;
     @FXML
     private Label lblNoCodeImageMsg;
+    @FXML
+    private Button btnOpenBarcode;
+    @FXML
+    private CheckBox chbxLogoBorder;
 
     private final Path qrcodeCacheDir;
     private final String IMG_FORMAT_JPG = "jpg";
-    private final int BARCODE_DEFAULT_SIZE = 200;
-    private final int LOGO_DEFAULT_SIZE = 30;
 
-    private CbxNVPairConverter cbxNVPairConverter = new CbxNVPairConverter();
+    private final int QRCODE_DEFAULT_WIDTH = 250;// 二维码默认尺寸
+    private final int LOGO_DEFAULT_WIDTH = QRCODE_DEFAULT_WIDTH / 5; // logo默认尺寸
+    private final float BARCODE_ASPECT_RATIO = 0.5f;// 条形码宽高比2:1
+
+    private NVPairConverter cbxNVPairConverter = new NVPairConverter();
+    private ValidationSupport validationSupport = new ValidationSupport();
 
     public QrcodeController() {
         qrcodeCacheDir = Paths.get(AppContext.getInstance()
@@ -102,17 +120,19 @@ public class QrcodeController {
 
     @FXML
     protected void initialize() {
+        initCodeContentValiation();
         logoField.addExtensionFilter("图片", "*.png", "*.jpg", "*.gif", "*.bmp");
-        logoField.selectedFileProperty()
+        /* logoField.selectedFileProperty()
                 .addListener(new ChangeListener<List<File>>() {
-
+        
                     @Override
                     public void changed(ObservableValue<? extends List<File>> observable, List<File> oldValue,
                             List<File> newValue) {
                         System.out.println(newValue.get(0)
                                 .getPath());
+                
                     }
-                });
+                });*/
 
         cpickerBarcodeBg.setValue(Color.WHITE);
         cpickerBarcodeFg.setValue(Color.BLACK);
@@ -139,17 +159,42 @@ public class QrcodeController {
                 .add("Code93(条形码)", "CODE_93")
                 .toList();
         bindNVPairToCombox(cbxBarcodeType, barcodeTypes, 0, 7);
+        cbxBarcodeType.getSelectionModel()
+                .selectedItemProperty()
+                .addListener(new ChangeListener<NameValuePair>() {
+
+                    @Override
+                    public void changed(ObservableValue<? extends NameValuePair> observable, NameValuePair oldValue,
+                            NameValuePair newValue) {
+                        cbxFault.setDisable(!is2DBarcode(BarcodeFormat.valueOf(newValue.getValue())));
+                    }
+                });
 
         codeImageViwer.setVisible(false);
-
         // spinner
         spnBarcodeSize
-                .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(80, 1000, BARCODE_DEFAULT_SIZE));
+                .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(80, 1000, QRCODE_DEFAULT_WIDTH));
         spnBarcodeSize.getEditor()
                 .setTextFormatter(new IntFieldFormatter());// 限制只能输入数字
-        spnLogoSize.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(LOGO_DEFAULT_SIZE, 300));
+        spnLogoSize.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(20, 400, LOGO_DEFAULT_WIDTH));
         spnLogoSize.getEditor()
                 .setTextFormatter(new IntFieldFormatter());
+    }
+
+    private void initCodeContentValiation() {
+        validationSupport.setValidationDecorator(new MyGraphicValidationDecoration());
+        validationSupport.registerValidator(barcodeText, true, new Validator<String>() {
+
+            @Override
+            public ValidationResult apply(Control ctl, String value) {
+                boolean condition = true;
+                if (!is2DBarcode(BarcodeFormat.valueOf(cbxBarcodeType.getValue()
+                        .getValue()))) {
+                    condition = ValidatorHelper.regex(value, "[0-9a-zA-Z]{1,80}");
+                }
+                return ValidationResult.fromErrorIf(ctl, "条形码内容只能是字母或数字,且长度小于80", !condition);
+            }
+        });
     }
 
     private void bindNVPairToCombox(ComboBox<NameValuePair> cbx, List<NameValuePair> dataItems, Integer selectedIndex,
@@ -185,52 +230,57 @@ public class QrcodeController {
         if (!initCacheDir()) {
             return;
         }
+        validationSupport.redecorate();
+        if (validationSupport.isInvalid()) {
+            return;
+        }
         String content = barcodeText.getText()
                 .strip();
         BarcodeFormat barcodeType = BarcodeFormat.valueOf(cbxBarcodeType.getValue()
                 .getValue());
-        boolean is2Dbarcode = is2DBarcode(barcodeType);
-
         File logoPath = logoField.getFirstSelectedFile();
+        boolean is2Dbarcode = is2DBarcode(barcodeType) && logoPath != null;
 
-        Integer barcodeSize = spnBarcodeSize.getValue(); // 图像宽度
-        if (NumberHelper.isNullOrZero(barcodeSize)) {
-            barcodeSize = BARCODE_DEFAULT_SIZE;
+        Integer barcodeWidth = spnBarcodeSize.getValue(); // 图像宽度
+        int barcodeHegiht;
+        if (NumberHelper.isNullOrZero(barcodeWidth)) {
+            barcodeWidth = QRCODE_DEFAULT_WIDTH;
         }
-        double maxShowWidth = barcodeBox.getWidth() - barcodeBox.getHeight() > 0 ? barcodeBox.getHeight()
-                : barcodeBox.getWidth();
-        if (is2Dbarcode && logoPath != null) {
-            Integer logoSize = spnLogoSize.getValue();
+        Integer logoSize = spnLogoSize.getValue();
+        Path newBarcodePath = Paths.get(qrcodeCacheDir.toString(), createBarcodeName());
+        Map<EncodeHintType,Object> hints = null;
+        if (is2Dbarcode) {
+            barcodeHegiht = barcodeWidth;
             if (NumberHelper.isNullOrZero(logoSize)) {
-                logoSize = LOGO_DEFAULT_SIZE;
+                logoSize = LOGO_DEFAULT_WIDTH;
             }
-            if (logoSize >= barcodeSize * 0.6) {
+            if (logoSize >= barcodeWidth * 0.5) {
                 UIComponents.createAlert("Logo尺寸过大影响识别率真,请重新调整大小");
                 return;
             }
+            hints = new HashMap<>();
+            hints.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
+            // 容错等级
+            ErrorCorrectionLevel ecLevel = ErrorCorrectionLevel.Q;
+            if (!cbxFault.getSelectionModel()
+                    .isEmpty()) {
+                ecLevel = ErrorCorrectionLevel.valueOf(cbxFault.getSelectionModel()
+                        .getSelectedItem()
+                        .getValue());
+            }
+            hints.put(EncodeHintType.ERROR_CORRECTION, ecLevel);
+            hints.put(EncodeHintType.MARGIN, 1);
+        } else {
+            barcodeHegiht = (int) (barcodeWidth * BARCODE_ASPECT_RATIO);
         }
-        Path newBarcodePath = Paths.get(qrcodeCacheDir.toString(), createBarcodeName());
-        Map<EncodeHintType,Object> hints = new HashMap<>();
-        hints.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
-        // 容错等级
-        ErrorCorrectionLevel ecLevel = ErrorCorrectionLevel.Q;
-        if (!cbxFault.getSelectionModel()
-                .isEmpty()) {
-            ecLevel = ErrorCorrectionLevel.valueOf(cbxFault.getSelectionModel()
-                    .getSelectedItem()
-                    .getValue());
-        }
-        hints.put(EncodeHintType.ERROR_CORRECTION, ecLevel);
-        hints.put(EncodeHintType.MARGIN, 1);
 
         Color fgColor = cpickerBarcodeFg.getValue();
         int offColor = UIComponents.colorToArgb(cpickerBarcodeBg.getValue());// 背景色
-        // int onColor = UIComponents.colorToArgb(cpickerBarcodeFg.getValue());// 前景色
         int onColor;
         BitMatrix bitMatrix;
         try {
-            bitMatrix = new MultiFormatWriter().encode(content, barcodeType, barcodeSize, barcodeSize, hints);
-            if (is2Dbarcode && logoPath != null) {
+            bitMatrix = new MultiFormatWriter().encode(content, barcodeType, barcodeWidth, barcodeHegiht, hints);
+            if (is2Dbarcode) {
                 // 在要设置logo时,前景色纯黑色时微调一点,避免zxing会把logo颜色变为黑白的bug
                 if (fgColor == Color.BLACK) {
                     onColor = UIComponents.colorToArgb(Color.valueOf("0x000001FF"));
@@ -238,32 +288,94 @@ public class QrcodeController {
                     onColor = UIComponents.colorToArgb(cpickerBarcodeFg.getValue());
                 }
                 MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(onColor, offColor);
-                BufferedImage bufferedImage = LogoMatrix(
-                        MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig), logoPath);
-                ImageIO.write(bufferedImage, IMG_FORMAT_JPG, newBarcodePath.toFile());// 输出带log
+                BufferedImage barcodeBufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix,
+                        matrixToImageConfig);
+                BufferedImage bufferedImage = drawLogoMatrix(barcodeBufferedImage, logoPath, logoSize,
+                        chbxLogoBorder.isSelected());
+                ImageIO.write(bufferedImage, IMG_FORMAT_JPG, newBarcodePath.toFile());
             } else {
                 onColor = UIComponents.colorToArgb(cpickerBarcodeFg.getValue());
                 MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(onColor, offColor);
-                MatrixToImageWriter.writeToPath(bitMatrix, IMG_FORMAT_JPG, newBarcodePath, matrixToImageConfig);// 输出原图片
+                MatrixToImageWriter.writeToPath(bitMatrix, IMG_FORMAT_JPG, newBarcodePath, matrixToImageConfig);
             }
-            System.out.println(newBarcodePath);
-            showBarcodeImage(new Image(newBarcodePath.toUri()
-                    .toURL()
-                    .toExternalForm()), barcodeSize > maxShowWidth ? maxShowWidth : barcodeSize);
-        } catch (WriterException | IOException e) {
-            UIComponents.createExDialog("生成条码异常", e);
+            showBarcodeImage(newBarcodePath, barcodeWidth, barcodeHegiht);
+        } catch (WriterException | IOException | IllegalArgumentException e) {
+            UIComponents.createExDialog("生成条码异常", e)
+                    .show();
             logger.error("生成条码异常,内容:{},ex:{}", content, e.getMessage());
         }
+    }
+
+    /**
+     * 在系统中直接打开生成的条码图片
+     * 
+     * @param event
+     */
+    @FXML
+    protected void handleOpenBarcodeInExplorer(ActionEvent event) {
+        Path currentBarPath = (Path) codeImageViwer.getUserData();
+        if (currentBarPath != null) {
+            try {
+                Desktop.getDesktop()
+                        .open(currentBarPath.toFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    protected void handleParseBarcode(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        chooser.showOpenDialog(lblParser.getScene()
+                .getWindow());
 
     }
 
-    private void showBarcodeImage(Image image, double showWidth) {
+    @FXML
+    protected void handleOpenBarcodeDir(ActionEvent event) {
+        Path currentBarPath = (Path) codeImageViwer.getUserData();
+        if (currentBarPath != null) {
+            try {
+                Desktop.getDesktop()
+                        .browseFileDirectory(currentBarPath.toFile());
+            } catch (UnsupportedOperationException e) {
+                String osName = System.getProperty("os.name");
+                if (osName.startsWith("Windows")) {
+                    try {
+                        Runtime.getRuntime()
+                                .exec("explorer /select, " + currentBarPath.toUri()
+                                        .toURL()
+                                        .toExternalForm());
+                    } catch (IOException e1) {
+                        UIComponents.createErrorAlert("当前操作系统不支持该操作,请复制路径打开")
+                                .show();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Tooltip pathTip;
+
+    private void showBarcodeImage(Path barcodePath, int barcodeWidth, int barcodeHegiht) throws MalformedURLException {
         lblNoCodeImageMsg.setVisible(false);
 
-        codeImageViwer.setFitWidth(showWidth);
-        codeImageViwer.setFitHeight(showWidth);
+        codeImageViwer.setFitWidth(barcodeWidth);
+        codeImageViwer.setFitHeight(barcodeHegiht);
         codeImageViwer.setVisible(true);
-        codeImageViwer.setImage(image);
+        codeImageViwer.setImage(new Image(barcodePath.toUri()
+                .toURL()
+                .toExternalForm()));
+        codeImageViwer.setUserData(barcodePath);
+        if (pathTip == null) {
+            pathTip = new Tooltip();
+            Tooltip.install(codeImageViwer, pathTip);
+        }
+        pathTip.setText(codeImageViwer.getUserData()
+                .toString());
     }
 
     /**
@@ -289,32 +401,37 @@ public class QrcodeController {
      * 
      * @param matrixImage 源二维码图片
      * @param logoFile logo图片
-     * @return 返回带有logo的二维码图片 参考：https://blog.csdn.net/weixin_39494923/article/details/79058799
+     * @param isDrawBroder logo周边是否绘制一个边框
+     * @return 返回带有logo的BufferedImage
      */
-    public static BufferedImage LogoMatrix(BufferedImage matrixImage, File logoFile) throws IOException {
+    private BufferedImage drawLogoMatrix(BufferedImage matrixImage, File logoFile, int logoSize, boolean isDrawBroder)
+            throws IOException {
         Graphics2D g2 = matrixImage.createGraphics();
 
         int matrixWidth = matrixImage.getWidth();
         int matrixHeigh = matrixImage.getHeight();
+        int logoX = (matrixWidth - logoSize) / 2;
+        int logoY = (matrixHeigh - logoSize) / 2;
 
+        // 绘制logo
         BufferedImage logo = ImageIO.read(logoFile);
+        g2.drawImage(logo, logoX, logoY, logoSize, logoSize, null);// 绘制logo
 
-        g2.drawImage(logo, matrixWidth / 5 * 2, matrixHeigh / 5 * 2, matrixWidth / 5, matrixHeigh / 5, null);// 绘制logo
+        // 外圈绘制个白底圆角矩形
         BasicStroke stroke = new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-        g2.setStroke(stroke);// 设置笔画对象
-        // 绘制圆角矩形
-        RoundRectangle2D.Float round = new RoundRectangle2D.Float(matrixWidth / 5 * 2, matrixHeigh / 5 * 2,
-                matrixWidth / 5, matrixHeigh / 5, 5, 5);
+        g2.setStroke(stroke);
+        RoundRectangle2D.Float round = new RoundRectangle2D.Float(logoX, logoY, logoSize, logoSize, 5, 5);
         g2.setColor(java.awt.Color.white);
-        g2.draw(round);// 绘制圆弧矩形
-
-        // 绘制灰色边框
-        BasicStroke stroke2 = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-        g2.setStroke(stroke2);
-        RoundRectangle2D.Float round2 = new RoundRectangle2D.Float(matrixWidth / 5 * 2 + 2, matrixHeigh / 5 * 2 + 2,
-                matrixWidth / 5 - 4, matrixHeigh / 5 - 4, 5, 5);
-        g2.setColor(new java.awt.Color(128, 128, 128));
-        g2.draw(round2);// 绘制圆弧矩形
+        g2.draw(round);
+        if (isDrawBroder) {
+            // 内圈绘制灰色边框
+            BasicStroke stroke2 = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+            g2.setStroke(stroke2);
+            RoundRectangle2D.Float round2 = new RoundRectangle2D.Float(logoX + 2, logoX + 2, logoSize - 4, logoSize - 4,
+                    5, 5);
+            g2.setColor(new java.awt.Color(128, 128, 128));
+            g2.draw(round2);
+        }
 
         g2.dispose();
         matrixImage.flush();
@@ -323,19 +440,7 @@ public class QrcodeController {
 
     private String createBarcodeName() {
         return DateHelper.format(LocalDateTime.now(), DateHelper.yyyyMMddHHmmssSSS)
-                + RandomStringUtils.random(3, true, true) + '.' + IMG_FORMAT_JPG;
+                + RandomStringUtils.randomAlphanumeric(3) + '.' + IMG_FORMAT_JPG;
     }
 
-    static class CbxNVPairConverter extends StringConverter<NameValuePair> {
-
-        @Override
-        public String toString(NameValuePair object) {
-            return object.getKey();
-        }
-
-        @Override
-        public NameValuePair fromString(String string) {
-            return null;
-        }
-    }
 }

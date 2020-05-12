@@ -82,11 +82,6 @@ public class MyDecorator extends VBox {
     private BoundingBox originalBox;
     private BoundingBox maximizedBox;
 
-    /*
-     * protected JFXButton btnMax; protected JFXButton btnFull; protected JFXButton btnClose; protected JFXButton
-     * btnMin;
-     */
-
     protected Button btnMax;
     protected Button btnFull;
     protected Button btnClose;

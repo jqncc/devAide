@@ -1,4 +1,4 @@
-package org.jflame.devAide.component;
+package org.jflame.devAide.component.convertor;
 
 import org.jflame.commons.valid.ValidatorHelper;
 

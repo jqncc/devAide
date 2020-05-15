@@ -5,6 +5,7 @@ import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
@@ -39,6 +41,7 @@ import org.jflame.devAide.util.UIComponents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.EncodeHintType;
@@ -59,14 +62,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -74,6 +80,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -148,7 +155,6 @@ public class QrcodeController {
                 .add("Qrcode(二维码)", "QR_CODE")
                 .add("DataMatrix(二维码)", "DATA_MATRIX")
                 .add("MaxiCode(二维码)", "DATA_MATRIX")
-                .add("PDF417(二维码)", "PDF_417")
                 .add("Code39(条形码)", "CODE_39")
                 .add("Code128(条形码)", "CODE_128")
                 .add("Code93(条形码)", "CODE_93")
@@ -203,7 +209,10 @@ public class QrcodeController {
                 .setTextFormatter(new IntFieldFormatter());
 
         historyView.setItems(barcodeRecords);
+        historyView.setCellFactory((ListView<BarcodeInfo> l) -> new BarcodeRecordListCell());
+
         Platform.runLater(() -> {
+            initCacheDir();
             if (!Files.exists(recordPath)) {
                 try {
                     Files.createFile(recordPath);
@@ -272,23 +281,20 @@ public class QrcodeController {
             barcodeText.requestFocus();
             return;
         }
-        if (!initCacheDir()) {
-            return;
-        }
         validationSupport.redecorate();
         if (validationSupport.isInvalid()) {
             return;
         }
         BarcodeInfo codeInfo = new BarcodeInfo();
-        codeInfo.setFormat(IMG_FORMAT_JPG);
+
         String content = barcodeText.getText()
                 .strip();
         codeInfo.setContent(content);
         BarcodeFormat barcodeType = BarcodeFormat.valueOf(cbxBarcodeType.getValue()
                 .getValue());
         File logoPath = logoField.getFirstSelectedFile();
-        boolean is2Dbarcode = is2DBarcode(barcodeType) && logoPath != null;
-
+        boolean is2Dbarcode = is2DBarcode(barcodeType);
+        codeInfo.setBarcodeType(barcodeType.name());
         Integer barcodeWidth = spnBarcodeSize.getValue(); // 图像宽度
         int barcodeHegiht;
         if (NumberHelper.isNullOrZero(barcodeWidth)) {
@@ -299,12 +305,14 @@ public class QrcodeController {
         Map<EncodeHintType,Object> hints = null;
         if (is2Dbarcode) {
             barcodeHegiht = barcodeWidth;
-            if (NumberHelper.isNullOrZero(logoSize)) {
-                logoSize = LOGO_DEFAULT_WIDTH;
-            }
-            if (logoSize >= barcodeWidth * 0.5) {
-                UIComponents.showWarnAlert("Logo尺寸过大影响识别率真,请重新调整大小");
-                return;
+            if (logoPath != null) {
+                if (NumberHelper.isNullOrZero(logoSize)) {
+                    logoSize = LOGO_DEFAULT_WIDTH;
+                }
+                if (logoSize >= barcodeWidth * 0.5) {
+                    UIComponents.showWarnAlert("Logo尺寸过大影响识别率真,请重新调整大小");
+                    return;
+                }
             }
             hints = new HashMap<>();
             hints.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
@@ -317,7 +325,7 @@ public class QrcodeController {
                         .getValue());
             }
             hints.put(EncodeHintType.ERROR_CORRECTION, ecLevel);
-            hints.put(EncodeHintType.MARGIN, 1);
+            hints.put(EncodeHintType.MARGIN, 0);
             codeInfo.setErrorCorrectionLevel(ecLevel.name());
         } else {
             barcodeHegiht = (int) (barcodeWidth * BARCODE_ASPECT_RATIO);
@@ -336,7 +344,7 @@ public class QrcodeController {
         BitMatrix bitMatrix;
         try {
             bitMatrix = new MultiFormatWriter().encode(content, barcodeType, barcodeWidth, barcodeHegiht, hints);
-            if (is2Dbarcode) {
+            if (is2Dbarcode && logoPath != null) {
                 // 在要设置logo时,前景色纯黑色时微调一点,避免zxing会把logo颜色变为黑白的bug
                 if (fgColor == Color.BLACK) {
                     onColor = UIComponents.colorToArgb(Color.valueOf("0x000001FF"));
@@ -350,6 +358,7 @@ public class QrcodeController {
                         chbxLogoBorder.isSelected());
                 codeInfo.setLogoPath(logoPath.toString());
                 codeInfo.setLogoSize(logoSize);
+                codeInfo.setLogoBorder(chbxLogoBorder.isSelected());
                 ImageIO.write(bufferedImage, IMG_FORMAT_JPG, newBarcodePath.toFile());
             } else {
                 onColor = UIComponents.colorToArgb(cpickerBarcodeFg.getValue());
@@ -361,6 +370,8 @@ public class QrcodeController {
             codeInfo.setBarcodePath(newBarcodePath.toString());
             codeInfo.setCreateTime(LocalDateTime.now());
             barcodeRecords.add(codeInfo);
+            BufferedWriter writer = Files.newBufferedWriter(recordPath);
+            JSON.writeJSONString(writer, barcodeRecords);
         } catch (WriterException | IOException | IllegalArgumentException e) {
             UIComponents.createExDialog("生成条码异常", e)
                     .show();
@@ -471,7 +482,7 @@ public class QrcodeController {
     /**
      * 初始条码文件缓存目录
      */
-    private boolean initCacheDir() {
+    private void initCacheDir() {
         if (Files.notExists(qrcodeCacheDir)) {
             try {
                 Files.createDirectories(qrcodeCacheDir);
@@ -480,10 +491,8 @@ public class QrcodeController {
             } catch (IOException e) {
                 UIComponents.createExDialog("无法创建二维码缓存目录" + qrcodeCacheDir, e)
                         .show();
-                return false;
             }
         }
-        return true;
     }
 
     /**
@@ -533,4 +542,88 @@ public class QrcodeController {
                 + RandomStringUtils.randomAlphanumeric(3) + '.' + IMG_FORMAT_JPG;
     }
 
+    class BarcodeRecordListCell extends ListCell<BarcodeInfo> {
+
+        AnchorPane internalPane;
+        static final String DEFAULT_STYLECLASS = "list-cell-pane";
+
+        public BarcodeRecordListCell() {
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        }
+
+        @Override
+        protected void updateItem(BarcodeInfo item, boolean empty) {
+            super.updateItem(item, empty);
+            if (!empty && item != null) {
+                internalPane = new AnchorPane();
+                internalPane.getStyleClass()
+                        .add(DEFAULT_STYLECLASS);
+                internalPane.setPrefSize(getListView().getPrefWidth(), 54);
+
+                ImageView thumbnail = new ImageView(Paths.get(item.getBarcodePath())
+                        .toUri()
+                        .toString());
+                thumbnail.setFitHeight(50);
+                thumbnail.setFitWidth(50);
+                AnchorPane.setTopAnchor(thumbnail, 0d);
+                AnchorPane.setLeftAnchor(thumbnail, 2d);
+
+                Label lblContent = new Label(item.getContent());
+                double leftAnchor = 58d;
+                lblContent.setPrefWidth(internalPane.getPrefWidth() - leftAnchor);
+                AnchorPane.setTopAnchor(lblContent, 0d);
+                AnchorPane.setLeftAnchor(lblContent, leftAnchor);
+
+                Hyperlink hlinkLoad = new Hyperlink("重新载入");
+                AnchorPane.setBottomAnchor(hlinkLoad, 2d);
+                AnchorPane.setRightAnchor(hlinkLoad, 2d);
+                hlinkLoad.setOnAction(new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent event) {
+                        barcodeText.setText(item.getContent());
+                        Optional<NameValuePair> optType = barcodeTypes.stream()
+                                .filter(b -> b.getValue()
+                                        .equals(item.getBarcodeType()))
+                                .findFirst();
+                        if (optType.isPresent()) {
+                            cbxBarcodeType.setValue(optType.get());
+                        }
+
+                        Optional<NameValuePair> optLevel = ecLevels.stream()
+                                .filter(e -> e.getValue()
+                                        .equals(item.getErrorCorrectionLevel()))
+                                .findFirst();
+                        if (optLevel.isPresent()) {
+                            cbxFault.setValue(optLevel.get());
+                        }
+                        spnBarcodeSize.getValueFactory()
+                                .setValue(item.getWidth());
+                        cpickerBarcodeBg.setValue(Color.valueOf(item.getBgColor()));
+                        cpickerBarcodeFg.setValue(Color.valueOf(item.getFgColor()));
+                        if (StringHelper.isNotEmpty(item.getLogoPath())) {
+                            logoField.setText(item.getLogoPath());
+                            spnLogoSize.getValueFactory()
+                                    .setValue(item.getLogoSize());
+                            chbxLogoBorder.setSelected(item.getLogoBorder());
+                        } else {
+                            chbxLogoBorder.setSelected(false);
+                            logoField.setText(null);
+                        }
+
+                        try {
+                            showBarcodeImage(Paths.get(item.getBarcodePath()), item.getWidth(), item.getHeight());
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                });
+
+                internalPane.getChildren()
+                        .addAll(thumbnail, lblContent, hlinkLoad);
+                setGraphic(internalPane);
+            }
+
+        }
+    }
 }

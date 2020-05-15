@@ -13,8 +13,9 @@ public class BarcodeInfo implements Serializable {
     private int height;
     private int logoSize;
     private String logoPath;
+    private Boolean logoBorder;
     private LocalDateTime createTime;
-    private String format;
+    private String barcodeType;
     private String errorCorrectionLevel;
     private String bgColor;
     private String fgColor;
@@ -75,12 +76,12 @@ public class BarcodeInfo implements Serializable {
         this.logoPath = logoPath;
     }
 
-    public String getFormat() {
-        return format;
+    public String getBarcodeType() {
+        return barcodeType;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public void setBarcodeType(String barcodeType) {
+        this.barcodeType = barcodeType;
     }
 
     public String getErrorCorrectionLevel() {
@@ -105,6 +106,14 @@ public class BarcodeInfo implements Serializable {
 
     public void setFgColor(String fgColor) {
         this.fgColor = fgColor;
+    }
+
+    public Boolean getLogoBorder() {
+        return logoBorder;
+    }
+
+    public void setLogoBorder(Boolean logoBorder) {
+        this.logoBorder = logoBorder;
     }
 
 }

@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import org.jflame.commons.common.bean.pair.NameValuePair;
+import org.jflame.commons.util.CollectionHelper;
 import org.jflame.commons.util.DateHelper;
 import org.jflame.commons.util.NumberHelper;
 import org.jflame.commons.util.StringHelper;
@@ -225,12 +227,13 @@ public class QrcodeController {
                     recordStr = Files.readString(recordPath);
                     if (StringHelper.isNotEmpty(recordStr)) {
                         List<BarcodeInfo> lst = JsonHelper.parseList(recordStr, BarcodeInfo.class);
-                        barcodeRecords.addAll(lst);
+                        if (CollectionHelper.isNotEmpty(lst)) {
+                            barcodeRecords.addAll(lst);
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
     }
@@ -370,8 +373,19 @@ public class QrcodeController {
             codeInfo.setBarcodePath(newBarcodePath.toString());
             codeInfo.setCreateTime(LocalDateTime.now());
             barcodeRecords.add(codeInfo);
-            BufferedWriter writer = Files.newBufferedWriter(recordPath);
-            JSON.writeJSONString(writer, barcodeRecords);
+            // 只保留20条记录
+            if (barcodeRecords.size() > 20) {
+                barcodeRecords.remove(0);
+            }
+            Platform.runLater(() -> {
+                BufferedWriter writer;
+                try {
+                    writer = Files.newBufferedWriter(recordPath, StandardOpenOption.WRITE);
+                    JSON.writeJSONString(writer, barcodeRecords);
+                } catch (IOException e) {
+                    logger.error("写入条码生成记录异常", e);
+                }
+            });
         } catch (WriterException | IOException | IllegalArgumentException e) {
             UIComponents.createExDialog("生成条码异常", e)
                     .show();

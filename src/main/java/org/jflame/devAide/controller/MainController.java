@@ -1,10 +1,12 @@
 package org.jflame.devAide.controller;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 import org.controlsfx.control.StatusBar;
-import org.jflame.commons.util.StringHelper;
+import org.jflame.commons.reflect.SpiFactory;
 import org.jflame.devAide.AppContext;
-import org.jflame.devAide.model.UIModel;
-import org.jflame.devAide.util.FxUtils;
+import org.jflame.devAide.plugin.ToolPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
+import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -44,10 +46,15 @@ public class MainController {
     @FXML
     private WebView mainWebView;
     @FXML
-    private ListView<UIModel> lstViewTool;
+    private ListView<ToolPlugin> lstViewTool;
+    private ObservableList<ToolPlugin> toolPlugins = FXCollections.observableArrayList();
 
     public MainController() {
-
+        Iterator<ToolPlugin> it = SpiFactory.getBeans(ToolPlugin.class);
+        while (it.hasNext()) {
+            toolPlugins.add(it.next());
+        }
+        Collections.sort(toolPlugins);
     }
 
     @FXML
@@ -88,17 +95,11 @@ public class MainController {
      * 初始开发工具菜单列表
      */
     private void initToolListView() {
-        UIModel qrCodeToolModel = new UIModel("条码生成器", "QRCODE", "qrcodeTool");
-        UIModel regToolModel = new UIModel("正则表达式", "EURO");
-        UIModel jsonToolModel = new UIModel("代码格式化", "FILE_TEXT", "formatTool");
-        UIModel cronToolModel = new UIModel("CRON表达式", "COPYRIGHT");
-        ObservableList<UIModel> lstViewToolData = FXCollections.observableArrayList(qrCodeToolModel, regToolModel,
-                jsonToolModel, cronToolModel);
-        lstViewTool.setItems(lstViewToolData);
-        lstViewTool.setCellFactory((ListView<UIModel> l) -> new ToolListViewCell());
+        lstViewTool.setItems(toolPlugins);
+        lstViewTool.setCellFactory((ListView<ToolPlugin> l) -> new ToolListViewCell());
         lstViewTool.getSelectionModel()
                 .selectedItemProperty()
-                .addListener((ObservableValue<? extends UIModel> ov, UIModel old_val, UIModel new_val) ->
+                .addListener((ObservableValue<? extends ToolPlugin> ov, ToolPlugin old_val, ToolPlugin new_val) ->
                 {
                     if (new_val == null) {
                         return;
@@ -118,9 +119,9 @@ public class MainController {
                             break;
                         }
                     }
-                    if (!isExist && StringHelper.isNotEmpty(new_val.getAction())) {
-                        Parent toolPaneOpt = FxUtils.loadFXML(new_val.getAction());
-                        Tab toolTab = new Tab(new_val.getText());
+                    if (!isExist) {
+                        Node toolPaneOpt = new_val.getContent();
+                        Tab toolTab = new Tab(new_val.getName());
                         toolTab.setOnClosed(new EventHandler<Event>() {
 
                             @Override
@@ -136,8 +137,7 @@ public class MainController {
                             }
                         });
                         toolTab.setUserData(new_val);
-                        toolTab.setGraphic(AppContext.FONT_AWESOME.create(new_val.getIcon())
-                                .size(9));
+                        toolTab.setGraphic(new_val.icon(9));
                         toolTab.setClosable(true);
                         toolTab.setContent(toolPaneOpt);
                         mainTab.getTabs()
@@ -182,23 +182,22 @@ public class MainController {
                         if (lstViewTool.getSelectionModel()
                                 .getSelectedItem() != newValue.getUserData()) {
                             lstViewTool.getSelectionModel()
-                                    .select((UIModel) newValue.getUserData());
+                                    .select((ToolPlugin) newValue.getUserData());
                         }
                     }
 
                 });
     }
 
-    static class ToolListViewCell extends ListCell<UIModel> {
+    static class ToolListViewCell extends ListCell<ToolPlugin> {
 
         @Override
-        protected void updateItem(UIModel item, boolean empty) {
+        protected void updateItem(ToolPlugin item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty && item != null) {
-                setText(item.getText());
+                setText(item.getName());
                 if (item.getIcon() != null) {
-                    setGraphic(AppContext.FONT_AWESOME.create(item.getIcon())
-                            .size(14));
+                    setGraphic(item.icon(14));
                 } else {
                     setGraphic(AppContext.FONT_AWESOME.create("WRENCH"));
                 }

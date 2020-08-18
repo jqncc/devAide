@@ -4,7 +4,7 @@ public class FormatTool implements ToolPlugin {
 
     @Override
     public String getName() {
-        return "JSON工具";
+        return "代码格式化";
     }
 
     @Override

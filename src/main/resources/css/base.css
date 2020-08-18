@@ -186,7 +186,7 @@
 	-fx-text-fill:#ccc; 
 	-fx-pref-height:24px; 
 	-fx-pref-width:1000;
-	-fx-font-size:9px;
+	-fx-font-size:10px;
 	-fx-padding:2px 10px;
 }
 .gitlink{-fx-text-fill:#999}

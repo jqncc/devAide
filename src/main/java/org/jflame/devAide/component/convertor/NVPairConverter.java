@@ -1,6 +1,6 @@
 package org.jflame.devAide.component.convertor;
 
-import org.jflame.commons.common.bean.pair.NameValuePair;
+import org.jflame.commons.model.pair.NameValuePair;
 
 import javafx.util.StringConverter;
 

@@ -20,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ListCell;
@@ -195,6 +196,7 @@ public class MainController {
         protected void updateItem(ToolPlugin item, boolean empty) {
             super.updateItem(item, empty);
             if (!empty && item != null) {
+                setCursor(Cursor.HAND);
                 setText(item.getName());
                 if (item.getIcon() != null) {
                     setGraphic(item.icon(14));

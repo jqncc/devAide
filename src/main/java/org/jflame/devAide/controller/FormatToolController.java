@@ -22,6 +22,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONValidator;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
@@ -62,7 +63,8 @@ public class FormatToolController implements Initializable {
                 if (isXml(srcStr)) {
                     // 作为xml处理
                     formattedStr = formatXml(srcStr);
-                } else if (JSON.isValid(srcStr)) {
+                } else if (JSONValidator.from(srcStr)
+                        .validate()) {
                     // 作为json处理
                     formattedStr = formatJson(srcStr);
                 } else {
@@ -85,7 +87,8 @@ public class FormatToolController implements Initializable {
             srcStr = srcStr.strip();
             if (isXml(srcStr)) {
                 escapeStr = StringEscapeUtils.escapeXml10(srcStr);
-            } else if (JSON.isValid(srcStr)) {
+            } else if (JSONValidator.from(srcStr)
+                    .validate()) {
                 escapeStr = StringEscapeUtils.escapeJson(srcStr);
             } else {
                 escapeStr = "不可识别格式";
@@ -104,7 +107,8 @@ public class FormatToolController implements Initializable {
             if (isXml(srcStr)) {
                 srcStr = srcStr.replaceAll(">(\\s*|\n|\t|\r)<", "><");
                 escapeStr = StringEscapeUtils.escapeXml10(srcStr);
-            } else if (JSON.isValid(srcStr)) {
+            } else if (JSONValidator.from(srcStr)
+                    .validate()) {
                 srcStr = JSON.toJSONString(
                         JSON.parse(srcStr, Feature.AllowComment, Feature.AllowSingleQuotes, Feature.AutoCloseSource),
                         SerializerFeature.WriteMapNullValue);

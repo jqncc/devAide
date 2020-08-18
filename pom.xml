@@ -10,11 +10,12 @@
 		<maven.compiler.target>11</maven.compiler.target>
 		<jfoenix.version>9.0.9</jfoenix.version>
 		<contolsfx.version>8.40.16</contolsfx.version>
-		<jflame.version>2.0.0-beta</jflame.version>
+		<jflame.version>2.1.0-beta</jflame.version>
 		<jfx.version>11.0.2</jfx.version>
 		<logback.version>1.2.3</logback.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<qrcode.version>3.4.0</qrcode.version>
+		<fastjson.version>1.2.70</fastjson.version>
 	</properties>
 
 	<dependencies>
@@ -65,6 +66,11 @@
 			<artifactId>javase</artifactId>
 			<version>${qrcode.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${fastjson.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -101,6 +107,13 @@
 								<option>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</option>
 								<option>--add-exports</option>
 								<option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
+								
+								<option>--add-exports</option>
+								<option>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.controls/com.sun.javafx.scene.control.skin=ALL-UNNAMED</option>
+								<option>--add-exports</option>
+								<option>javafx.base/com.sun.javafx.collections=ALL-UNNAMED</option>
 							</options>
 							<mainClass>org.jflame.devAide.App</mainClass>
 							<executable>D:/Java/jdk-11.0.3/bin/java</executable>
@@ -113,18 +126,29 @@
 							<options>
 								<option>-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=localhost:8000</option>
 								<option>-Djava.library.path=c:\tmp</option>
+								
 								<option>--add-exports</option>
 								<option>javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</option>
+								
 								<option>--add-exports</option>
 								<option>javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</option>
+								
 								<option>--add-exports</option>
 								<option>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</option>
+								
 								<option>--add-exports</option>
 								<option>javafx.graphics/com.sun.glass.ui=ALL-UNNAMED</option>
+								
 								<option>--add-exports</option>
 								<option>javafx.graphics/com.sun.javafx.css=ALL-UNNAMED</option>
+								
 								<option>--add-exports</option>
 								<option>javafx.base/com.sun.javafx.runtime=ALL-UNNAMED</option>
+								
+								<option>--add-exports</option>
+								<option>javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED</option>
+								<option>--add-opens</option>
+								<option>javafx.controls/javafx.scene.control.skin=org.controlsfx.controls</option>
 							</options>
 							<mainClass>org.jflame.devAide.App</mainClass>
 							<executable>D:/Java/jdk-11.0.3/bin/java</executable>

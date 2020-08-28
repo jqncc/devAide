@@ -2,9 +2,9 @@ package org.jflame.devAide.controller;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.ServiceLoader;
 
 import org.controlsfx.control.StatusBar;
-import org.jflame.commons.reflect.SpiFactory;
 import org.jflame.devAide.AppContext;
 import org.jflame.devAide.plugin.ToolPlugin;
 import org.slf4j.Logger;
@@ -51,7 +51,9 @@ public class MainController {
     private ObservableList<ToolPlugin> toolPlugins = FXCollections.observableArrayList();
 
     public MainController() {
-        Iterator<ToolPlugin> it = SpiFactory.getBeans(ToolPlugin.class);
+        // Iterator<ToolPlugin> it = SpiFactory.getBeans(ToolPlugin.class);
+        ServiceLoader<ToolPlugin> sloader = ServiceLoader.load(ToolPlugin.class);
+        Iterator<ToolPlugin> it = sloader.iterator();
         while (it.hasNext()) {
             toolPlugins.add(it.next());
         }
@@ -152,7 +154,7 @@ public class MainController {
     }
 
     private void initStatusBar() {
-        Hyperlink linkGit = new Hyperlink("Github");
+        Hyperlink linkGit = new Hyperlink("GITHUB");
         linkGit.getStyleClass()
                 .add("gitlink");
         linkGit.setOnAction(new EventHandler<ActionEvent>() {

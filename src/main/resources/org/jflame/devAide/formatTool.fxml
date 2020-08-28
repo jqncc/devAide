@@ -19,11 +19,11 @@
 	<children>
 		<TextArea fx:id="srcText" prefHeight="600.0" prefWidth="300.0" promptText="待格式化文本,支持xml/json格式" />
 		<TextArea fx:id="targetText" prefHeight="600.0" prefWidth="300.0" GridPane.columnIndex="2" />
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" GridPane.columnIndex="1">
+      <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="15.0" GridPane.columnIndex="1">
          <children>
-      		<Button fx:id="btnJsonFmt" mnemonicParsing="false" onAction="#formattHandle" styleClass="flatBtn,btn-success" text="格式化" />
-            <Button fx:id="btnCompressAndEscape" onAction="#handleCompressAndEscape" styleClass="flatBtn,btn-info" mnemonicParsing="false" text="压缩并转义" />
-            <Button fx:id="btnEscape" onAction="#handleEscape" mnemonicParsing="false" styleClass="flatBtn,btn-info" text="转义" />
+      		<Button fx:id="btnJsonFmt" mnemonicParsing="false" onAction="#formattHandle" prefWidth="150.0" styleClass="flatBtn,btn-success" text="格式化" />
+            <Button fx:id="btnCompressAndEscape" mnemonicParsing="false" onAction="#handleCompressAndEscape" prefWidth="150.0" styleClass="flatBtn,btn-info" text="压缩转义" />
+            <Button fx:id="btnEscape" mnemonicParsing="false" onAction="#handleEscape" prefWidth="150.0" styleClass="flatBtn,btn-info" text="转义" />
          </children>
       </VBox>
 	</children>

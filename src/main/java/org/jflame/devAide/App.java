@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -35,6 +36,9 @@ public class App extends Application {
                 .addAll(AppContext.getStyleFiles());
         stage.setScene(scene);
         stage.setResizable(true);
+        stage.setTitle("DevAide");
+        stage.getIcons()
+                .add(new Image(App.class.getResourceAsStream("/images/logo32X32.png")));
         stage.show();
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 

@@ -2,12 +2,14 @@
     font-family: Roboto;
     src: url("Roboto-Regular.ttf");
 }*/
+/*-fx-background-insets: 背景内边框距离外边框距离
+-fx-border-insets ： 边框距离边界距离*/
 .root {
     -fx-font-family:"Microsoft YaHei";
     -fx-font-size:14px;
     -fx-text-fill:#333;
 }
-.text-area,.text-area:focused{-fx-background-radius: 0;-fx-background-insets: -0.1, 1, 1;}
+.text-area,.text-area:focused{-fx-background-radius: 0;-fx-background-insets: -0.1, 1, 1;-fx-font-size:14px;}
 .text-field{ -fx-background-color:#fff;-fx-background-insets: 0;-fx-background-radius: 0;}
 .text-field{
     -fx-border-width:1px;
@@ -224,9 +226,18 @@
 .list-cell-pane .label{-fx-text-fill:#666}
 
 #barcodeRecordView:focused {
-	 -fx-background-color: -fx-box-border, -fx-control-inner-background;
+	-fx-background-color: -fx-box-border, -fx-control-inner-background;
     -fx-background-insets: 0,1;
 }
 
 
+#regexSplitPane{-fx-background-color:#fff}
+#regexSplitPane > .split-pane-divider {
+    -fx-padding: 0 1 0 0;
+}
+#regexSplitPane:vertical > .split-pane-divider {
+	-fx-border:none;
+   -fx-background-color: #ccc;
+   -fx-background-insets: 0,1 0 1 0;
+}
 

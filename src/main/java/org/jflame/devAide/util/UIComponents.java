@@ -3,6 +3,7 @@ package org.jflame.devAide.util;
 import org.controlsfx.dialog.ExceptionDialog;
 import org.jflame.devAide.AppContext;
 
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -108,6 +109,16 @@ public final class UIComponents {
         int o = (int) Math.round(color.getOpacity() * 255.0);
         String hexColor = String.format("%02x%02x%02x%02x", o, r, g, b);
         return Integer.parseUnsignedInt(hexColor, 16);
+    }
+
+    public static void hide(Node node) {
+        node.setVisible(false);
+        node.setManaged(false);
+    }
+
+    public static void show(Node node) {
+        node.setVisible(true);
+        node.setManaged(true);
     }
 
     public static void main(String[] args) {

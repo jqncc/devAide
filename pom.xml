@@ -9,7 +9,8 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<jfoenix.version>9.0.9</jfoenix.version>
-		<contolsfx.version>8.40.16</contolsfx.version>
+		<!-- <contolsfx.version>8.40.16</contolsfx.version> -->
+		<contolsfx.version>11.0.2</contolsfx.version>
 		<jflame.version>2.1.0-beta</jflame.version>
 		<jfx.version>11.0.2</jfx.version>
 		<logback.version>1.2.3</logback.version>

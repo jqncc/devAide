@@ -14,16 +14,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<SplitPane id="regexSplitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308"
-	maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0"
-	xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="org.jflame.devAide.controller.RegexController">
+<SplitPane id="regexSplitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.RegexController">
 	<items>
-		<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0"
-			minWidth="0.0" prefHeight="598.0" prefWidth="520.0">
+		<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="598.0" prefWidth="520.0">
 			<children>
-				<GridPane layoutX="15.0" layoutY="40.0" prefHeight="463.0" prefWidth="511.0" vgap="15.0"
-					AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
+				<GridPane layoutX="15.0" layoutY="40.0" prefHeight="463.0" prefWidth="511.0" vgap="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
 					<columnConstraints>
 						<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
 					</columnConstraints>
@@ -38,34 +33,30 @@
 							<children>
 								<CheckBox fx:id="chxCase" mnemonicParsing="false" text="忽略大小写" />
 								<CheckBox fx:id="chxMultiMode" mnemonicParsing="false" text="多行模式" />
+                        <CheckBox fx:id="chxDotall" mnemonicParsing="false" text="DOTALL模式" />
 								<CheckBox fx:id="chxReplace" mnemonicParsing="false" text="替换" />
 							</children>
 							<padding>
 								<Insets right="10.0" />
 							</padding>
 						</HBox>
-						<HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="63.0" prefWidth="521.0" spacing="10.0"
-							GridPane.rowIndex="1">
+						<HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="63.0" prefWidth="521.0" spacing="10.0" GridPane.rowIndex="1">
 							<children>
 								<TextArea fx:id="regexText" prefHeight="50.0" prefWidth="428.0" promptText="正则表达式" HBox.hgrow="ALWAYS" />
-								<TextArea minWidth="200.0" fx:id="replText" prefHeight="50.0" prefWidth="200.0" promptText="替换文本"
-									visible="false" />
-								<Button fx:id="btnHandle" minWidth="60.0" mnemonicParsing="false" onAction="#handleRegex"
-									prefHeight="50.0" prefWidth="60.0" styleClass="flatBtn,btn-primary" text="执 行" HBox.hgrow="ALWAYS" />
+								<TextArea fx:id="replText" minWidth="200.0" prefHeight="50.0" prefWidth="250.0" promptText="替换文本" visible="false" />
+								<Button fx:id="btnHandle" minWidth="60.0" mnemonicParsing="false" onAction="#handleRegex" prefHeight="50.0" prefWidth="60.0" styleClass="flatBtn,btn-primary" text="执 行" HBox.hgrow="ALWAYS" />
 							</children>
 						</HBox>
 						<AnchorPane prefHeight="155.0" prefWidth="516.0" GridPane.rowIndex="2">
 							<children>
 								<Label text="源文本：" AnchorPane.topAnchor="0.0" />
-								<TextArea fx:id="srcText" layoutY="19.0" prefHeight="140.0" prefWidth="516.0"
-									AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="22.0" />
+								<TextArea fx:id="srcText" layoutY="19.0" prefHeight="140.0" prefWidth="516.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="22.0" />
 							</children>
 						</AnchorPane>
 						<AnchorPane prefHeight="210.0" prefWidth="516.0" GridPane.rowIndex="3">
 							<children>
 								<Label layoutY="8.0" text="结果：" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="2.0" />
-								<TextArea fx:id="resultText" editable="false" layoutY="33.0" prefHeight="140.0" prefWidth="516.0"
-									AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0" />
+								<TextArea fx:id="resultText" editable="false" layoutY="33.0" prefHeight="140.0" prefWidth="516.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0" />
 							</children>
 						</AnchorPane>
 					</children>
@@ -75,11 +66,9 @@
 				<Insets right="20.0" />
 			</padding>
 		</AnchorPane>
-		<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0"
-			minWidth="0.0" prefHeight="598.0" prefWidth="360.0">
+		<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="598.0" prefWidth="360.0">
 			<children>
-				<TabPane layoutX="6.0" layoutY="7.0" prefHeight="587.0" prefWidth="357.0" tabClosingPolicy="UNAVAILABLE"
-					AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+				<TabPane layoutX="6.0" layoutY="7.0" prefHeight="587.0" prefWidth="357.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 					<tabs>
 						<Tab closable="false" text="正则语法" />
 						<Tab closable="false" text="常用正则" />

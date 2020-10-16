@@ -12,7 +12,7 @@
 		<!-- <contolsfx.version>8.40.16</contolsfx.version> -->
 		<contolsfx.version>11.0.2</contolsfx.version>
 		<jflame.version>2.1.0-beta</jflame.version>
-		<jfx.version>11.0.2</jfx.version>
+		<jfx.version>12</jfx.version>
 		<logback.version>1.2.3</logback.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<qrcode.version>3.4.0</qrcode.version>
@@ -46,11 +46,12 @@
 			<groupId>org.jflame</groupId>
 			<artifactId>jflame-commons</artifactId>
 			<version>${jflame.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -71,6 +72,21 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 			<version>${fastjson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cronutils</groupId>
+			<artifactId>cron-utils</artifactId>
+			<version>9.1.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-simple</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	<build>
@@ -95,7 +111,7 @@
 						<configuration>
 							<options>
 								<option>-Djava.library.path=c:\tmp</option>
-								<option>--add-opens</option> 
+								<option>--add-opens</option>
 								<option>javafx.graphics/javafx.scene=org.controlsfx.controls</option>
 							</options>
 							<mainClass>org.jflame.devAide.App</mainClass>
@@ -108,7 +124,7 @@
 							<options>
 								<option>-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=localhost:8000</option>
 								<option>-Djava.library.path=c:\tmp</option>
-								<option>--add-opens</option> 
+								<option>--add-opens</option>
 								<option>javafx.graphics/javafx.scene=org.controlsfx.controls</option>
 							</options>
 							<mainClass>org.jflame.devAide.App</mainClass>

@@ -2,11 +2,14 @@ package org.jflame.devAide.util;
 
 import org.controlsfx.dialog.ExceptionDialog;
 import org.jflame.devAide.AppContext;
+import org.jflame.devAide.component.MyIntegerSpinnerValueFactory;
+import org.jflame.devAide.component.convertor.IntFieldFormatter;
 
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Spinner;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
@@ -121,8 +124,42 @@ public final class UIComponents {
         node.setManaged(true);
     }
 
-    public static void main(String[] args) {
-        System.out.println(Color.valueOf("0x000001ff"));
-        System.out.println(Color.BLACK);
+    /**
+     * 设置spinner为只可输入整数.初始值为最小值
+     * 
+     * @param spinner
+     * @param min
+     * @param max
+     */
+    public static void setSpinnerForInteger(Spinner<Integer> spinner, int min, int max) {
+        setSpinnerForInteger(spinner, min, max, min);
+    }
+
+    /**
+     * 设置spinner为只可输入整数.
+     * 
+     * @param spinner
+     * @param min
+     * @param max
+     * @param initialValue 初始值
+     */
+    public static void setSpinnerForInteger(Spinner<Integer> spinner, int min, int max, int initialValue) {
+        setSpinnerForInteger(spinner, min, max, initialValue, 1);
+    }
+
+    /**
+     * 设置spinner为只可输入整数
+     * 
+     * @param spinner
+     * @param min
+     * @param max
+     * @param initialValue 初始值
+     * @param amountToStepBy 增长步长
+     */
+    public static void setSpinnerForInteger(Spinner<Integer> spinner, int min, int max, int initialValue,
+            int amountToStepBy) {
+        spinner.setValueFactory(new MyIntegerSpinnerValueFactory(min, max, initialValue, amountToStepBy));
+        spinner.getEditor()
+                .setTextFormatter(new IntFieldFormatter());
     }
 }

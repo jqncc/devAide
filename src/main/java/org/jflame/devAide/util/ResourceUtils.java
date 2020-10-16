@@ -1,5 +1,6 @@
 package org.jflame.devAide.util;
 
+import org.jflame.commons.exception.BusinessException;
 import org.jflame.commons.util.UrlHelper;
 
 /**
@@ -16,14 +17,25 @@ public class ResourceUtils {
      * @return
      */
     public static String absUrl(String relativePath) {
-        return ResourceUtils.class.getResource(relativePath)
-                .toExternalForm();
+        if (relativePath == null) {
+            throw new IllegalArgumentException("relativePath not be null");
+        }
+        try {
+            return ResourceUtils.class.getResource(relativePath)
+                    .toExternalForm();
+        } catch (NullPointerException e) {
+            throw new BusinessException(relativePath + "不存在 ");
+        }
+
     }
 
     private static final String CSS_DIR = "/css";
 
     public static String cssUrl(String cssName) {
-        String relPath = UrlHelper.mergeUrl(CSS_DIR, cssName, ".css");
+        if (!cssName.endsWith(".css")) {
+            cssName = cssName + ".css";
+        }
+        String relPath = UrlHelper.mergeUrl(CSS_DIR, cssName);
         return ResourceUtils.absUrl(relPath);
     }
 }

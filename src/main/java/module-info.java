@@ -15,6 +15,7 @@ module devAide {
     requires fastjson;
     requires jflame.commons;
     requires slf4j.api;
+    requires cron.utils;
 
     exports org.jflame.devAide.component;
     exports org.jflame.devAide.model;

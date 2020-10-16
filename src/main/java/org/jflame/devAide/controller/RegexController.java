@@ -1,5 +1,6 @@
 package org.jflame.devAide.controller;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,7 +8,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
+import org.jflame.commons.util.MapHelper;
 import org.jflame.devAide.component.MyGraphicValidationDecoration;
+import org.jflame.devAide.util.ResourceUtils;
+import org.jflame.devAide.util.SegmentXmlUtils;
 import org.jflame.devAide.util.UIComponents;
 
 import javafx.beans.property.BooleanProperty;
@@ -15,11 +19,17 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 
 public class RegexController {
 
@@ -31,12 +41,6 @@ public class RegexController {
     private TextArea regexText;
     @FXML
     private Button btnHandle;
-
-    /*  @FXML
-    private ToggleButton toggleBtnCase;
-    
-    @FXML
-    private GridPane leftgrid;*/
     @FXML
     private CheckBox chxCase;
     @FXML
@@ -45,9 +49,15 @@ public class RegexController {
     private CheckBox chxReplace;
     @FXML
     private CheckBox chxDotall;
-
     @FXML
     private TextArea replText;
+    @FXML
+    private VBox usuallyRegexBox;
+    /*    @FXML
+    private Tab usuallyRegexTab;*/
+
+    @FXML
+    private WebView syntaxView;
 
     private PattenOption pattenOption = new PattenOption();
     private ValidationSupport validationSupport = new ValidationSupport();
@@ -66,8 +76,6 @@ public class RegexController {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
                             Boolean newValue) {
-                        System.out.println(newValue);
-                        System.out.println(chxReplace.isSelected());
                         if (newValue) {
                             UIComponents.show(replText);
                             replText.setText(null);
@@ -82,6 +90,8 @@ public class RegexController {
                 .bindBidirectional(pattenOption.multiline());
         chxDotall.selectedProperty()
                 .bindBidirectional(pattenOption.dotall());
+
+        initRgihtTabpane();
 
         validationSupport.setValidationDecorator(new MyGraphicValidationDecoration());
         validationSupport.registerValidator(srcText, Validator.createEmptyValidator("请输入源文本"));
@@ -140,9 +150,32 @@ public class RegexController {
 
     }
 
+    /**
+     * 初始右边'正则语法'和'常用正则'面板
+     */
+    private void initRgihtTabpane() {
+        Map<String,String> usuallyRegexMap = SegmentXmlUtils.getUsuallyRegex();// 从xml加载文档内容
+        // 常用正则
+        if (MapHelper.isNotEmpty(usuallyRegexMap)) {
+            UsuallyRegexLabelClickHandler clickHandler = new UsuallyRegexLabelClickHandler();
+            usuallyRegexMap.forEach((k, v) -> {
+                Label label = new Label(k);
+                label.setUserData(v);
+                label.setOnMouseClicked(clickHandler);
+                usuallyRegexBox.getChildren()
+                        .add(label);
+            });
+        }
+        // 使用webview展示正则语法
+        syntaxView.getEngine()
+                .setUserStyleSheetLocation(ResourceUtils.cssUrl("webview"));
+        syntaxView.setContextMenuEnabled(false);
+        syntaxView.getEngine()
+                .loadContent(SegmentXmlUtils.getRegexSyntax());
+    }
+
     @FXML
     protected void handleRegex(ActionEvent event) {
-        System.out.println("check:" + validationSupport.isInvalid());
         if (!validationSupport.isInvalid()) {
             Pattern regex = Pattern.compile(regexText.getText(), pattenOption.or());
             Matcher matcher = regex.matcher(srcText.getText());
@@ -167,7 +200,18 @@ public class RegexController {
         }
     }
 
-    class PattenOption {
+    private class UsuallyRegexLabelClickHandler implements EventHandler<MouseEvent> {
+
+        @Override
+        public void handle(MouseEvent event) {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+                Label l = (Label) event.getSource();
+                regexText.setText((String) l.getUserData());
+            }
+        }
+    }
+
+    private class PattenOption {
 
         private BooleanProperty caseInsensitive = new SimpleBooleanProperty(false);
         private BooleanProperty multiline = new SimpleBooleanProperty(false);
@@ -209,6 +253,11 @@ public class RegexController {
             this.dotall.set(_dotall);
         }
 
+        /**
+         * 多个正则选项作|操作
+         * 
+         * @return
+         */
         public int or() {
             int i = 0;
             if (getCaseInsensitive()) {

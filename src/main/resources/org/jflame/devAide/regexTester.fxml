@@ -13,8 +13,10 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
 
-<SplitPane id="regexSplitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.RegexController">
+<SplitPane id="regexSplitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.RegexController">
 	<items>
 		<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="598.0" prefWidth="520.0">
 			<children>
@@ -33,7 +35,7 @@
 							<children>
 								<CheckBox fx:id="chxCase" mnemonicParsing="false" text="忽略大小写" />
 								<CheckBox fx:id="chxMultiMode" mnemonicParsing="false" text="多行模式" />
-                        <CheckBox fx:id="chxDotall" mnemonicParsing="false" text="DOTALL模式" />
+								<CheckBox fx:id="chxDotall" mnemonicParsing="false" text="DOTALL模式" />
 								<CheckBox fx:id="chxReplace" mnemonicParsing="false" text="替换" />
 							</children>
 							<padding>
@@ -68,10 +70,19 @@
 		</AnchorPane>
 		<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="598.0" prefWidth="360.0">
 			<children>
-				<TabPane layoutX="6.0" layoutY="7.0" prefHeight="587.0" prefWidth="357.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+				<TabPane layoutX="6.0" layoutY="7.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="595.0" prefWidth="357.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="30.0" tabMaxWidth="100.0" tabMinHeight="30.0" tabMinWidth="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 					<tabs>
-						<Tab closable="false" text="正则语法" />
-						<Tab closable="false" text="常用正则" />
+						<Tab closable="false" text="正则语法">
+							<content>
+								<WebView id="syntaxView" fx:id="syntaxView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="570" prefWidth="340" />
+							</content>
+						</Tab>
+						<Tab closable="false" text="常用正则">
+							<content>
+								<VBox id="usuallyRegexBox" fx:id="usuallyRegexBox" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" prefHeight="570" prefWidth="340">
+								</VBox>
+							</content>
+						</Tab>
 					</tabs>
 				</TabPane>
 			</children>

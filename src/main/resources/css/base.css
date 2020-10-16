@@ -92,13 +92,13 @@
     -fx-background-color: #f5f5f5;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-    -fx-padding: 0.333em 0.666em 0.333em 0.666em; /* 4 8 4 8 */
+    -fx-padding: 0.333em 0.666em 0.333em 0.666em; 
 }
 .spinner .decrement-arrow-button {
     -fx-background-color: #f5f5f5;
     -fx-background-insets: 0;
     -fx-background-radius:0;
-    -fx-padding: 0.250em 0.666em 0.5em 0.666em; /* 3 8 6 8 */
+    -fx-padding: 0.250em 0.666em 0.5em 0.666em; 
 }
 
 #mainTab > .tab-header-area > .tab-header-background{
@@ -220,7 +220,17 @@
 .valid_error_tip{-fx-background-color: #FBEFEF; -fx-text-fill: #cc0033; -fx-border-color:#ec7272;}
 .valid_warning_tip{-fx-background-color: #FFFFCC; -fx-text-fill: #CC9900; -fx-border-color: #CC9900;}
 .valid_info_tip{-fx-background-color: #c4d0ef; -fx-text-fill: #FFFFFF; -fx-border-color: #a8c8ff;}
+.error {
+    -fx-effect: dropshadow(three-pass-box, darkred, 7, 0, 0, 0);
+}
 
+.warning {
+    -fx-effect: dropshadow(three-pass-box, gold, 14, 0, 0, 0);
+}
+
+.info {
+    -fx-effect: dropshadow(three-pass-box, skyblue, 14, 0, 0, 0);
+}
 
 /*#barcodeRecordView .list-cell:selected{-fx-background-color:#fff;-fx-text-fill:#333;} */
 .list-cell-pane .label{-fx-text-fill:#666}
@@ -229,7 +239,6 @@
 	-fx-background-color: -fx-box-border, -fx-control-inner-background;
     -fx-background-insets: 0,1;
 }
-
 
 #regexSplitPane{-fx-background-color:#fff}
 #regexSplitPane > .split-pane-divider {
@@ -240,4 +249,14 @@
    -fx-background-color: #ccc;
    -fx-background-insets: 0,1 0 1 0;
 }
+#usuallyRegexBox{-fx-spacing:8;-fx-padding:10 10 0 8}
+#usuallyRegexBox .label{-fx-cursor:hand;-fx-text-fill:#369}
 
+.cronFlowPane{-fx-padding:5 5 0 30;-fx-hgap:6;-fx-vgap:6}
+.cronFlowPane .check-box{-fx-pref-width:50}
+
+.crontextbox,#cronBox{-fx-padding:15 0 0 20;-fx-spacing:10;}
+#cronBox{-fx-alignment:center-left;-fx-border-color: #ccc;-fx-border-width: 1px 0 0 0}
+#cronBox .text-field{ -fx-pref-width:250}
+
+.cronTabPane .tab-label{-fx-size:18px}

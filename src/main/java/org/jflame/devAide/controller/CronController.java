@@ -1,7 +1,9 @@
 package org.jflame.devAide.controller;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -14,25 +16,39 @@ import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.decoration.StyleClassValidationDecoration;
 import org.jflame.commons.model.Chars;
 import org.jflame.commons.util.DateHelper;
-import org.jflame.devAide.util.UIComponents;
+import org.jflame.commons.util.StringHelper;
+import org.jflame.devAide.component.CheckBoxFlowPane;
+import org.jflame.devAide.util.UIUtils;
 
 import com.cronutils.builder.CronBuilder;
 import com.cronutils.model.Cron;
 import com.cronutils.model.definition.CronConstraintsFactory;
 import com.cronutils.model.definition.CronDefinition;
 import com.cronutils.model.definition.CronDefinitionBuilder;
+import com.cronutils.model.field.CronField;
 import com.cronutils.model.field.CronFieldName;
 import com.cronutils.model.field.constraint.FieldConstraints;
+import com.cronutils.model.field.expression.And;
+import com.cronutils.model.field.expression.Between;
+import com.cronutils.model.field.expression.Every;
 import com.cronutils.model.field.expression.FieldExpression;
 import com.cronutils.model.field.expression.FieldExpressionFactory;
+import com.cronutils.model.field.expression.On;
+import com.cronutils.model.field.value.IntegerFieldValue;
 import com.cronutils.model.field.value.SpecialChar;
 import com.cronutils.model.time.ExecutionTime;
+import com.cronutils.parser.CronParser;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
@@ -40,13 +56,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 
 public class CronController {
 
     @FXML
-    private FlowPane secondFlowPane;
+    private CheckBoxFlowPane secondFlowPane;
     @FXML
     private ToggleGroup secondGrp;
     @FXML
@@ -67,7 +81,7 @@ public class CronController {
     private RadioButton secOnRadioBtn;
 
     @FXML
-    private FlowPane minuteFlowPane;
+    private CheckBoxFlowPane minuteFlowPane;
     @FXML
     private ToggleGroup minuteGrp;
     @FXML
@@ -88,7 +102,7 @@ public class CronController {
     private RadioButton minOnRadioBtn;
 
     @FXML
-    private FlowPane hourFlowPane;
+    private CheckBoxFlowPane hourFlowPane;
     @FXML
     private ToggleGroup hourGrp;
     @FXML
@@ -109,7 +123,7 @@ public class CronController {
     private RadioButton hourOnRadioBtn;
 
     @FXML
-    private FlowPane dayFlowPane;
+    private CheckBoxFlowPane dayFlowPane;
     @FXML
     private ToggleGroup dayGrp;
     @FXML
@@ -134,7 +148,7 @@ public class CronController {
     private RadioButton dayNoSpecifiedRadioBtn;
 
     @FXML
-    private FlowPane monthFlowPane;
+    private CheckBoxFlowPane monthFlowPane;
     @FXML
     private ToggleGroup monthGrp;
     @FXML
@@ -155,7 +169,7 @@ public class CronController {
     private RadioButton monthOnRadioBtn;
 
     @FXML
-    private FlowPane weekFlowPane;
+    private CheckBoxFlowPane weekFlowPane;
     @FXML
     private ToggleGroup weekGrp;
     @FXML
@@ -167,7 +181,7 @@ public class CronController {
     @FXML
     private Spinner<Integer> weekIntervalSpinner;
     @FXML
-    private Spinner<Integer> weekLastSpinnerStart;
+    private Spinner<Integer> weekLastSpinner;
     @FXML
     private RadioButton weekPeriodRadioBtn;
     @FXML
@@ -182,23 +196,45 @@ public class CronController {
     private RadioButton weekNoSpecifiedRadioBtn;
 
     @FXML
+    private CheckBoxFlowPane yearFlowPane;
+    @FXML
+    private ToggleGroup yearGrp;
+    @FXML
+    private Spinner<Integer> yearPeriodSpinnerStart;
+    @FXML
+    private Spinner<Integer> yearPeriodSpinnerEnd;
+    @FXML
+    private RadioButton yearPeriodRadioBtn;
+    @FXML
+    private RadioButton yearPerRadioBtn;
+    @FXML
+    private RadioButton yearOnRadioBtn;
+
+    @FXML
     private TextField cronTextField;
     @FXML
     private TextArea nextTimes;
+    @FXML
+    private Button btnParse;
+    @FXML
+    private Button btnGen;
 
     private ValidationSupport validationSupport = new ValidationSupport();
 
     private Map<CronFieldName,FieldExpression> cronFieldContainer = new EnumMap<>(CronFieldName.class);
-    private Map<CronFieldName,FieldPaneGroup> fieldGroup = new HashMap<>();
+    // private Map<CronFieldName,FieldPaneGroup> fieldGroup = new HashMap<>();
+    private Map<CronFieldName,CronFieldValue> fieldValueGroup = new HashMap<>();
 
     private final CronDefinition initCronDef;
 
-    private final String FIELD_EXPRESSION_ON = "on";
-    private final String FIELD_EXPRESSION_ONLAST = "onlast";
-    private final String FIELD_EXPRESSION_BETWEEN = "between";
-    private final String FIELD_EXPRESSION_EVERY = "every";
-    private final String FIELD_EXPRESSION_ALWAYS = "always";
-    private final String FIELD_EXPRESSION_NOTSPECIFIED = "not_specified";
+    private final String FIELD_EXPRESSION_ON = "m,n";
+    private final String FIELD_EXPRESSION_ONLAST = "L";
+    private final String FIELD_EXPRESSION_ONLASTFEW = "nL";
+    private final String FIELD_EXPRESSION_BETWEEN = "m-n";
+    private final String FIELD_EXPRESSION_EVERY = "m/n";
+    private final String FIELD_EXPRESSION_INDEX_WEEK = "m#n";
+    private final String FIELD_EXPRESSION_ALWAYS = "*";
+    private final String FIELD_EXPRESSION_NOTSPECIFIED = "?";
 
     public CronController() {
         initCronDef = CronDefinitionBuilder.defineCron()
@@ -244,6 +280,15 @@ public class CronController {
         initDayPane();
         initMonthPane();
         initDayOfWeekPane();
+        initYearPane();
+
+        btnGen.setOnAction(event -> {
+            generateCron();
+        });
+
+        btnParse.setOnAction(event -> {
+            parseCronToUI();
+        });
     }
 
     /**
@@ -251,16 +296,7 @@ public class CronController {
      */
     private void initSecondPane() {
         initCommonField(CronFieldName.SECOND, secondFlowPane, secondGrp, secPeriodSpinnerStart, secPeriodSpinnerEnd,
-                secIntervalSpinnerStart, secIntervalSpinner, secOnRadioBtn);
-
-        FieldPaneGroup paneGroup = new FieldPaneGroup(secondFlowPane, secondGrp, secPeriodSpinnerStart,
-                secPeriodSpinnerEnd, secIntervalSpinnerStart, secIntervalSpinner);
-        fieldGroup.put(CronFieldName.SECOND, paneGroup);
-
-        secIntervalRadioBtn.setUserData(FIELD_EXPRESSION_EVERY);
-        secPeriodRadioBtn.setUserData(FIELD_EXPRESSION_BETWEEN);
-        secOnRadioBtn.setUserData(FIELD_EXPRESSION_ON);
-        secPerRadioBtn.setUserData(FIELD_EXPRESSION_ALWAYS);
+                secIntervalSpinnerStart, secIntervalSpinner);
     }
 
     /**
@@ -268,16 +304,7 @@ public class CronController {
      */
     private void initMinutePane() {
         initCommonField(CronFieldName.MINUTE, minuteFlowPane, minuteGrp, minPeriodSpinnerStart, minPeriodSpinnerEnd,
-                minIntervalSpinnerStart, minIntervalSpinner, minOnRadioBtn);
-
-        FieldPaneGroup paneGroup = new FieldPaneGroup(minuteFlowPane, minuteGrp, minPeriodSpinnerStart,
-                minPeriodSpinnerEnd, minIntervalSpinnerStart, minIntervalSpinner);
-        fieldGroup.put(CronFieldName.MINUTE, paneGroup);
-
-        minIntervalRadioBtn.setUserData(FIELD_EXPRESSION_EVERY);
-        minPeriodRadioBtn.setUserData(FIELD_EXPRESSION_BETWEEN);
-        minOnRadioBtn.setUserData(FIELD_EXPRESSION_ON);
-        minPerRadioBtn.setUserData(FIELD_EXPRESSION_ALWAYS);
+                minIntervalSpinnerStart, minIntervalSpinner);
     }
 
     /**
@@ -285,16 +312,7 @@ public class CronController {
      */
     private void initHourPane() {
         initCommonField(CronFieldName.HOUR, hourFlowPane, hourGrp, hourPeriodSpinnerStart, hourPeriodSpinnerEnd,
-                hourIntervalSpinnerStart, hourIntervalSpinner, hourOnRadioBtn);
-
-        FieldPaneGroup paneGroup = new FieldPaneGroup(hourFlowPane, hourGrp, hourPeriodSpinnerStart,
-                hourPeriodSpinnerEnd, hourIntervalSpinnerStart, hourIntervalSpinner);
-        fieldGroup.put(CronFieldName.HOUR, paneGroup);
-
-        hourIntervalRadioBtn.setUserData(FIELD_EXPRESSION_EVERY);
-        hourPeriodRadioBtn.setUserData(FIELD_EXPRESSION_BETWEEN);
-        hourOnRadioBtn.setUserData(FIELD_EXPRESSION_ON);
-        hourPerRadioBtn.setUserData(FIELD_EXPRESSION_ALWAYS);
+                hourIntervalSpinnerStart, hourIntervalSpinner);
     }
 
     /**
@@ -302,18 +320,7 @@ public class CronController {
      */
     private void initDayPane() {
         initCommonField(CronFieldName.DAY_OF_MONTH, dayFlowPane, dayGrp, dayPeriodSpinnerStart, dayPeriodSpinnerEnd,
-                dayIntervalSpinnerStart, dayIntervalSpinner, dayOnRadioBtn);
-
-        FieldPaneGroup paneGroup = new FieldPaneGroup(dayFlowPane, dayGrp, dayPeriodSpinnerStart, dayPeriodSpinnerEnd,
                 dayIntervalSpinnerStart, dayIntervalSpinner);
-        fieldGroup.put(CronFieldName.DAY_OF_MONTH, paneGroup);
-
-        dayIntervalRadioBtn.setUserData(FIELD_EXPRESSION_EVERY);
-        dayPeriodRadioBtn.setUserData(FIELD_EXPRESSION_BETWEEN);
-        dayOnRadioBtn.setUserData(FIELD_EXPRESSION_ON);
-        dayPerRadioBtn.setUserData(FIELD_EXPRESSION_ALWAYS);
-        dayNoSpecifiedRadioBtn.setUserData(FIELD_EXPRESSION_NOTSPECIFIED);
-        dayLastRadioBtn.setUserData(FIELD_EXPRESSION_ONLAST);
     }
 
     /**
@@ -321,37 +328,43 @@ public class CronController {
      */
     private void initMonthPane() {
         initCommonField(CronFieldName.MONTH, monthFlowPane, monthGrp, monthPeriodSpinnerStart, monthPeriodSpinnerEnd,
-                monthIntervalSpinnerStart, monthIntervalSpinner, monthOnRadioBtn);
-
-        FieldPaneGroup paneGroup = new FieldPaneGroup(monthFlowPane, monthGrp, monthPeriodSpinnerStart,
-                monthPeriodSpinnerEnd, monthIntervalSpinnerStart, monthIntervalSpinner);
-        fieldGroup.put(CronFieldName.MONTH, paneGroup);
-
-        monthIntervalRadioBtn.setUserData(FIELD_EXPRESSION_EVERY);
-        monthPeriodRadioBtn.setUserData(FIELD_EXPRESSION_BETWEEN);
-        monthOnRadioBtn.setUserData(FIELD_EXPRESSION_ON);
-        monthPerRadioBtn.setUserData(FIELD_EXPRESSION_ALWAYS);
+                monthIntervalSpinnerStart, monthIntervalSpinner);
     }
 
     /**
      * '周'面板初始
      */
     private void initDayOfWeekPane() {
-        initCommonField(CronFieldName.DAY_OF_WEEK, weekFlowPane, weekGrp, weekPeriodSpinnerStart, weekPeriodSpinnerEnd,
-                weekIntervalSpinnerStart, weekIntervalSpinner, weekOnRadioBtn);
+        CronFieldValue bindProperty = initCommonField(CronFieldName.DAY_OF_WEEK, weekFlowPane, weekGrp,
+                weekPeriodSpinnerStart, weekPeriodSpinnerEnd, weekIntervalSpinnerStart, weekIntervalSpinner);
 
-        UIComponents.setSpinnerForInteger(weekLastSpinnerStart, 1, 7);
+        UIUtils.setSpinnerForInteger(weekLastSpinner, 1, 7);
+        bindProperty.lastDayOfWeekProperty()
+                .bind(weekLastSpinner.valueProperty());
+    }
 
-        FieldPaneGroup paneGroup = new FieldPaneGroup(weekFlowPane, weekGrp, weekPeriodSpinnerStart,
-                weekPeriodSpinnerEnd, weekIntervalSpinnerStart, weekIntervalSpinner);
-        fieldGroup.put(CronFieldName.DAY_OF_WEEK, paneGroup);
+    /**
+     * '年'面板初始
+     */
+    private void initYearPane() {
+        CronFieldValue bindProperty = new CronFieldValue();
 
-        weekIntervalRadioBtn.setUserData(FIELD_EXPRESSION_EVERY);
-        weekPeriodRadioBtn.setUserData(FIELD_EXPRESSION_BETWEEN);
-        weekOnRadioBtn.setUserData(FIELD_EXPRESSION_ON);
-        weekPerRadioBtn.setUserData(FIELD_EXPRESSION_ALWAYS);
-        weekNoSpecifiedRadioBtn.setUserData(FIELD_EXPRESSION_NOTSPECIFIED);
-        weekLastRadioBtn.setUserData(FIELD_EXPRESSION_ONLAST);
+        int curYear = LocalDate.now()
+                .getYear();
+        createCheckboxByRange(yearFlowPane, yearOnRadioBtn, bindProperty, curYear - 5, curYear + 15);
+
+        // 设置spinner为数值类型
+        UIUtils.setSpinnerForInteger(yearPeriodSpinnerStart, 1970, 2099);
+        UIUtils.setSpinnerForInteger(yearPeriodSpinnerEnd, 1970, 2099);
+
+        bindProperty.selectedFieldExpression()
+                .bind(yearGrp.selectedToggleProperty());
+        bindProperty.periodStartProperty()
+                .bind(yearPeriodSpinnerStart.valueProperty());
+        bindProperty.periodEndProperty()
+                .bind(yearPeriodSpinnerEnd.valueProperty());
+
+        fieldValueGroup.put(CronFieldName.YEAR, bindProperty);
     }
 
     /**
@@ -365,33 +378,37 @@ public class CronController {
      * @param intervalSpinnerStart
      * @param intervalSpinner
      */
-    private void initCommonField(CronFieldName field, FlowPane flowPane, ToggleGroup toggleGrp,
+    private CronFieldValue initCommonField(CronFieldName field, CheckBoxFlowPane flowPane, ToggleGroup toggleGrp,
             Spinner<Integer> periodSpinnerStart, Spinner<Integer> periodSpinnerEnd,
-            Spinner<Integer> intervalSpinnerStart, Spinner<Integer> intervalSpinner, RadioButton fieldOn) {
-        initCheckBoxOfFieldRange(flowPane, field, fieldOn);
+            Spinner<Integer> intervalSpinnerStart, Spinner<Integer> intervalSpinner) {
+        CronFieldValue bindProperty = new CronFieldValue();
+
+        initCheckBoxOfFieldRange(flowPane, field, bindProperty);
+
         int maxRange = initCronDef.getFieldDefinition(field)
                 .getConstraints()
                 .getEndRange();
         // 设置spinner为数值类型
-        UIComponents.setSpinnerForInteger(periodSpinnerStart, 0, maxRange);
-        UIComponents.setSpinnerForInteger(periodSpinnerEnd, 1, maxRange);
-        UIComponents.setSpinnerForInteger(intervalSpinnerStart, 0, maxRange);
-        UIComponents.setSpinnerForInteger(intervalSpinner, 1, maxRange);
+        UIUtils.setSpinnerForInteger(periodSpinnerStart, 0, maxRange);
+        UIUtils.setSpinnerForInteger(periodSpinnerEnd, 1, maxRange);
+        UIUtils.setSpinnerForInteger(intervalSpinnerStart, 0, maxRange);
+        UIUtils.setSpinnerForInteger(intervalSpinner, 1, maxRange);
 
-        // 事件绑定
-        toggleGrp.selectedToggleProperty()
-                .addListener(new ChangedEventHander<Toggle>());
+        bindProperty.selectedFieldExpression()
+                .bind(toggleGrp.selectedToggleProperty());
 
-        ChangedEventHander<Integer> spnnerValueListener = new ChangedEventHander<>();
+        bindProperty.periodStartProperty()
+                .bind(periodSpinnerStart.valueProperty());
+        bindProperty.periodEndProperty()
+                .bind(periodSpinnerEnd.valueProperty());
 
-        periodSpinnerStart.valueProperty()
-                .addListener(spnnerValueListener);
-        periodSpinnerEnd.valueProperty()
-                .addListener(spnnerValueListener);
-        intervalSpinnerStart.valueProperty()
-                .addListener(spnnerValueListener);
-        intervalSpinner.valueProperty()
-                .addListener(spnnerValueListener);
+        bindProperty.intervalStartProperty()
+                .bind(intervalSpinnerStart.valueProperty());
+        bindProperty.intervalProperty()
+                .bind(intervalSpinner.valueProperty());
+
+        fieldValueGroup.put(field, bindProperty);
+        return bindProperty;
     }
 
     /**
@@ -400,27 +417,62 @@ public class CronController {
      * @param pane
      * @param fieldName
      */
-    private void initCheckBoxOfFieldRange(Pane pane, CronFieldName fieldName, RadioButton abouButton) {
+    private void initCheckBoxOfFieldRange(CheckBoxFlowPane pane, CronFieldName fieldName, CronFieldValue bindProperty) {
         FieldConstraints fieldConstraints = initCronDef.getFieldDefinition(fieldName)
                 .getConstraints();
-        List<CheckBox> childs = new ArrayList<>();
-        CheckedEventHander eventHander = new CheckedEventHander(abouButton);
-        for (int i = fieldConstraints.getStartRange(); i <= fieldConstraints.getEndRange(); i++) {
-            CheckBox checkBox = new CheckBox(String.valueOf(i));
-            checkBox.selectedProperty()
-                    .addListener(eventHander);
-            childs.add(checkBox);
+        RadioButton rb = null;
+        switch (fieldName) {
+            case SECOND:
+                rb = secOnRadioBtn;
+                break;
+            case MINUTE:
+                rb = minOnRadioBtn;
+                break;
+            case HOUR:
+                rb = hourOnRadioBtn;
+                break;
+            case DAY_OF_MONTH:
+                rb = dayOnRadioBtn;
+                break;
+            case MONTH:
+                rb = monthOnRadioBtn;
+                break;
+            case DAY_OF_WEEK:
+                rb = weekOnRadioBtn;
+                break;
+            default:
+                break;
         }
-        pane.getChildren()
-                .addAll(childs);
+        createCheckboxByRange(pane, rb, bindProperty, fieldConstraints.getStartRange(), fieldConstraints.getEndRange());
     }
 
-    private void buildFieldExpressionFromFieldPane(CronFieldName fieldName) {
-        FieldPaneGroup paneGroup = fieldGroup.get(fieldName);
-        RadioButton selectedMinuteRadio = (RadioButton) paneGroup.getFieldExpToggleGrp()
-                .getSelectedToggle();
+    private void createCheckboxByRange(CheckBoxFlowPane pane, RadioButton onRadioButton, CronFieldValue bindProperty,
+            int start, int end) {
+        ChangeListener<Boolean> rbListener = new ChangeListener<Boolean>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (newValue && !onRadioButton.isSelected()) {
+                    onRadioButton.setSelected(true);
+                }
+            }
+
+        };
+        for (int i = start; i <= end; i++) {
+            CheckBox checkBox = new CheckBox(String.valueOf(i));
+            pane.add(checkBox);
+            checkBox.selectedProperty()
+                    .addListener(rbListener);
+        }
+        bindProperty.onValuesProperty()
+                .bind(pane.selectedValuesProperty());
+    }
+
+    private void buildFieldExpression(CronFieldName fieldName) {
+        CronFieldValue fieldValue = fieldValueGroup.get(fieldName);
         FieldExpression expression = null;
-        String selectedFieldExp = (String) selectedMinuteRadio.getUserData();
+        String selectedFieldExp = fieldValue.getSelectedFieldExpression();
+        // System.out.println(fieldName.name() + "= " + selectedFieldExp);
         if (selectedFieldExp == null) {
             return;
         }
@@ -432,16 +484,22 @@ public class CronController {
                 expression = FieldExpression.questionMark();
                 break;
             case FIELD_EXPRESSION_EVERY:
-                expression = paneGroup.buildFieldExpressionFromIntervalCtl();
+                expression = fieldValue.buildFieldExpressionFromIntervalCtl();
                 break;
             case FIELD_EXPRESSION_BETWEEN:
-                expression = paneGroup.buildFieldExpressionFromPeriodCtl();
+                expression = fieldValue.buildFieldExpressionFromPeriodCtl();
                 break;
             case FIELD_EXPRESSION_ON:
-                expression = paneGroup.buildFieldExpressionFromOnCtl();
+                expression = fieldValue.buildFieldExpressionFromOnCtl();
                 break;
             case FIELD_EXPRESSION_ONLAST:
                 expression = FieldExpressionFactory.on(SpecialChar.L);
+                break;
+            case FIELD_EXPRESSION_ONLASTFEW:
+                expression = fieldValue.buildFieldExpressionLastDayOfWeek();
+                break;
+            case FIELD_EXPRESSION_INDEX_WEEK:
+                expression = fieldValue.buildFieldExpressionIndexDayOfWeek();
                 break;
             default:
                 break;
@@ -452,146 +510,223 @@ public class CronController {
         }
     }
 
-    private List<Integer> getCheckboxValuesFromPane(Pane pane) {
-        ObservableList<Node> checkboxs = pane.getChildren();
-        List<Integer> values = new ArrayList<>();
-        for (Node node : checkboxs) {
-            if (node instanceof CheckBox) {
-                CheckBox cbox = (CheckBox) node;
-                if (cbox.isSelected()) {
-                    values.add(Integer.valueOf(cbox.getText()));
-                }
+    /**
+     * 生成cron表达式
+     */
+    private void generateCron() {
+        cronFieldContainer.clear();
+        for (CronFieldName cfn : CronFieldName.values()) {
+            if (cfn != CronFieldName.DAY_OF_YEAR) {
+                buildFieldExpression(cfn);
             }
         }
-        return values;
-    }
-
-    private void generateCron() {
-        buildFieldExpressionFromFieldPane(CronFieldName.SECOND);
-        buildFieldExpressionFromFieldPane(CronFieldName.MINUTE);
-        buildFieldExpressionFromFieldPane(CronFieldName.HOUR);
-        buildFieldExpressionFromFieldPane(CronFieldName.DAY_OF_MONTH);
-        buildFieldExpressionFromFieldPane(CronFieldName.MONTH);
 
         if (cronFieldContainer.size() < 6) {
             cronTextField.setText(StringUtils.EMPTY);
+            UIUtils.errorAlert("设置不完整");
             return;
         }
-        Cron cron = CronBuilder.cron(initCronDef)
-                .withYear(cronFieldContainer.get(CronFieldName.YEAR))
-                .withDoM(cronFieldContainer.get(CronFieldName.DAY_OF_MONTH))
-                .withMonth(cronFieldContainer.get(CronFieldName.MONTH))
-                .withDoW(cronFieldContainer.get(CronFieldName.DAY_OF_WEEK))
-                .withHour(cronFieldContainer.get(CronFieldName.HOUR))
-                .withMinute(cronFieldContainer.get(CronFieldName.MINUTE))
-                .withSecond(cronFieldContainer.get(CronFieldName.SECOND))
-                .instance();
+        if (cronFieldContainer.get(CronFieldName.DAY_OF_MONTH) != FieldExpression.questionMark()) {
+            if (cronFieldContainer.get(CronFieldName.DAY_OF_WEEK) != FieldExpression.questionMark()) {
+                UIUtils.errorAlert("星期和日不能同时指定");
+                return;
+            }
+        }
+
+        CronBuilder builder = CronBuilder.cron(initCronDef);
+        if (cronFieldContainer.containsKey(CronFieldName.YEAR)) {
+            builder = builder.withYear(cronFieldContainer.get(CronFieldName.YEAR));
+        }
+        Cron cron = null;
+        try {
+            cron = builder.withDoM(cronFieldContainer.get(CronFieldName.DAY_OF_MONTH))
+                    .withMonth(cronFieldContainer.get(CronFieldName.MONTH))
+                    .withDoW(cronFieldContainer.get(CronFieldName.DAY_OF_WEEK))
+                    .withHour(cronFieldContainer.get(CronFieldName.HOUR))
+                    .withMinute(cronFieldContainer.get(CronFieldName.MINUTE))
+                    .withSecond(cronFieldContainer.get(CronFieldName.SECOND))
+                    .instance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            UIUtils.errorAlert(e.getMessage());
+            return;
+        }
         cronTextField.setText(cron.asString());
         // 生成最近运行时间
         ExecutionTime executionTime = ExecutionTime.forCron(cron);
         ZonedDateTime now = ZonedDateTime.now();
         int i = 0;
-        StringBuilder nextCronText = new StringBuilder(210);
-        while (i < 10) {
+        StringBuilder nextCronText = new StringBuilder(170);
+        while (i < 8) {
             Optional<ZonedDateTime> zdt = executionTime.nextExecution(now);
             if (zdt.isPresent()) {
                 nextCronText.append(DateHelper.format(zdt.get(), DateHelper.YYYY_MM_DD_HH_mm_ss))
                         .append(Chars.LF);
                 now = zdt.get();
             }
+            i++;
         }
         nextTimes.setText(nextCronText.toString());
     }
 
     /**
-     * 修改事件处理器.重新生成cron
-     *
-     * @param <T>
+     * 解析cron表达式设置到UI控件
      */
-    private class ChangedEventHander<T> implements ChangeListener<T> {
-
-        @Override
-        public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
-            generateCron();
-        }
-    }
-
-    private class CheckedEventHander implements ChangeListener<Boolean> {
-
-        private RadioButton aboutRadioButton;
-
-        public CheckedEventHander(RadioButton radioButton) {
-            aboutRadioButton = radioButton;
-        }
-
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            if (aboutRadioButton.isSelected()) {
-                generateCron();
+    private void parseCronToUI() {
+        String cronStr = cronTextField.getText();
+        if (StringHelper.isNotEmpty(cronStr)) {
+            CronParser parser = new CronParser(initCronDef);
+            try {
+                Cron cron = parser.parse(cronStr.trim());
+                Map<CronFieldName,CronField> cronMap = cron.retrieveFieldsAsMap();
+                cronMap.forEach((k, v) -> {
+                    if (k == CronFieldName.SECOND) {
+                        commonCronFieldAssignToUI(k, v, secondFlowPane, secondGrp, secPeriodSpinnerStart,
+                                secPeriodSpinnerEnd, secIntervalSpinnerStart, secIntervalSpinner);
+                    } else if (k == CronFieldName.MINUTE) {
+                        commonCronFieldAssignToUI(k, v, minuteFlowPane, minuteGrp, minPeriodSpinnerStart,
+                                minPeriodSpinnerEnd, minIntervalSpinnerStart, minIntervalSpinner);
+                    } else if (k == CronFieldName.HOUR) {
+                        commonCronFieldAssignToUI(k, v, hourFlowPane, hourGrp, hourPeriodSpinnerStart,
+                                hourPeriodSpinnerEnd, hourIntervalSpinnerStart, hourIntervalSpinner);
+                    } else if (k == CronFieldName.DAY_OF_MONTH) {
+                        commonCronFieldAssignToUI(k, v, dayFlowPane, dayGrp, dayPeriodSpinnerStart, dayPeriodSpinnerEnd,
+                                dayIntervalSpinnerStart, dayIntervalSpinner);
+                    } else if (k == CronFieldName.MONTH) {
+                        commonCronFieldAssignToUI(k, v, monthFlowPane, monthGrp, monthPeriodSpinnerStart,
+                                monthPeriodSpinnerEnd, monthIntervalSpinnerStart, monthIntervalSpinner);
+                    } else if (k == CronFieldName.DAY_OF_WEEK) {
+                        commonCronFieldAssignToUI(k, v, weekFlowPane, weekGrp, weekPeriodSpinnerStart,
+                                weekPeriodSpinnerEnd, weekIntervalSpinnerStart, weekIntervalSpinner);
+                    } else if (k == CronFieldName.YEAR) {
+                        commonCronFieldAssignToUI(k, v, yearFlowPane, yearGrp, yearPeriodSpinnerStart,
+                                yearPeriodSpinnerEnd, null, null);
+                    }
+                });
+            } catch (IllegalArgumentException e) {
+                UIUtils.errorAlert("cron表达式解析错误:" + e.getMessage());
             }
         }
-
     }
 
-    /**
-     * 表达式面板关联控件组,方便取关联的控件
-     */
-    private class FieldPaneGroup {
-
-        private FlowPane onExpCheckboxPane;// '表达式范围'checbox所在的pane
-        private ToggleGroup fieldExpToggleGrp;// 表达式选项按钮组
-        private Spinner<Integer> periodSpinnerStart;
-        private Spinner<Integer> periodSpinnerEnd;
-        private Spinner<Integer> intervalSpinnerStart;
-        private Spinner<Integer> intervalSpinner;
-
-        public FieldPaneGroup() {
+    private void commonCronFieldAssignToUI(CronFieldName fieldName, CronField field, CheckBoxFlowPane checkBoxPane,
+            ToggleGroup toggleGrp, Spinner<Integer> periodSpinnerStart, Spinner<Integer> periodSpinnerEnd,
+            Spinner<Integer> intervalSpinnerStart, Spinner<Integer> intervalSpinner) {
+        if (field.getExpression() == FieldExpression.always()) {
+            selectRadioButtonByFieldExp(toggleGrp, FIELD_EXPRESSION_ALWAYS);
+        } else if (field.getExpression() == FieldExpression.questionMark()) {
+            if (fieldName != CronFieldName.YEAR) {
+                selectRadioButtonByFieldExp(toggleGrp, FIELD_EXPRESSION_NOTSPECIFIED);
+            }
+        } else if (field.getExpression() instanceof Between) {
+            selectRadioButtonByFieldExp(toggleGrp, FIELD_EXPRESSION_BETWEEN);
+            Between bwExp = (Between) field.getExpression();
+            periodSpinnerStart.getValueFactory()
+                    .setValue(((IntegerFieldValue) bwExp.getFrom()).getValue());
+            periodSpinnerEnd.getValueFactory()
+                    .setValue(((IntegerFieldValue) bwExp.getTo()).getValue());
+        } else if (field.getExpression() instanceof Every) {
+            selectRadioButtonByFieldExp(toggleGrp, FIELD_EXPRESSION_EVERY);
+            Every everyExp = (Every) field.getExpression();
+            UIUtils.setValue(intervalSpinner, everyExp.getPeriod()
+                    .getValue());
+            UIUtils.setValue(intervalSpinnerStart, ((On) everyExp.getExpression()).getTime()
+                    .getValue());
+        } else if (field.getExpression() instanceof And) {
+            selectRadioButtonByFieldExp(toggleGrp, FIELD_EXPRESSION_ON);
+            And andExp = (And) field.getExpression();
+            List<Object> onValues = new ArrayList<>();
+            andExp.getExpressions()
+                    .forEach(s ->
+                    {
+                        onValues.add(((On) s).getTime()
+                                .getValue());
+                    });
+            checkBoxPane.setSelectedValues(onValues);
+        } else if (field.getExpression() instanceof On) {
+            On onExp = (On) field.getExpression();
+            if (onExp.getSpecialChar()
+                    .getValue() == SpecialChar.L) {
+                if (onExp.getTime()
+                        .getValue() == -1) {
+                    selectRadioButtonByFieldExp(toggleGrp, FIELD_EXPRESSION_ONLAST);
+                } else {
+                    // nL只在'周'可用
+                    if (fieldName == CronFieldName.DAY_OF_WEEK) {
+                        weekLastRadioBtn.setSelected(true);
+                        UIUtils.setValue(weekLastSpinner, onExp.getTime()
+                                .getValue());
+                    }
+                }
+            } else if (onExp.getSpecialChar()
+                    .getValue() == SpecialChar.HASH) {
+                // m#n只在'周'可用
+                if (fieldName == CronFieldName.DAY_OF_WEEK) {
+                    weekIntervalRadioBtn.setSelected(true);
+                    UIUtils.setValue(intervalSpinnerStart, onExp.getTime()
+                            .getValue());
+                    UIUtils.setValue(intervalSpinner, onExp.getNth()
+                            .getValue());
+                }
+            } else if (onExp.getSpecialChar()
+                    .getValue() == SpecialChar.NONE) {
+                selectRadioButtonByFieldExp(toggleGrp, FIELD_EXPRESSION_ON);
+                checkBoxPane.setSelectedValues(Arrays.asList(onExp.getTime()
+                        .getValue()));
+            }
         }
+    }
 
-        public FieldPaneGroup(FlowPane onExpCheckboxPane, ToggleGroup fieldExpToggleGrp,
-                Spinner<Integer> periodSpinnerStart, Spinner<Integer> periodSpinnerEnd,
-                Spinner<Integer> intervalSpinnerStart, Spinner<Integer> intervalSpinner) {
-            this.onExpCheckboxPane = onExpCheckboxPane;
-            this.fieldExpToggleGrp = fieldExpToggleGrp;
-            this.periodSpinnerStart = periodSpinnerStart;
-            this.periodSpinnerEnd = periodSpinnerEnd;
-            this.intervalSpinnerStart = intervalSpinnerStart;
-            this.intervalSpinner = intervalSpinner;
-        }
+    private String getRadioButtonFieldExp(RadioButton rb) {
+        String rbText = rb.getText();
+        return StringUtils.substringBetween(rbText, "(", ")");
+    }
 
-        /**
-         * 返回CronField数值范围的checkbox已选择的值
-         * 
-         * @return
-         */
-        public List<Integer> getCheckedOfOnExp() {
-            return getCheckboxValuesFromPane(onExpCheckboxPane);
+    private void selectRadioButtonByFieldExp(ToggleGroup toggleGrp, String fieldExpression) {
+        toggleGrp.getToggles()
+                .forEach(t ->
+                {
+                    if (fieldExpression.equals(getRadioButtonFieldExp((RadioButton) t))) {
+                        t.setSelected(true);
+                    }
+                });
+    }
+
+    private class CronFieldValue {
+
+        private ObjectProperty<Toggle> selectedFieldExpression = new SimpleObjectProperty<>();
+        private IntegerProperty periodStart = new SimpleIntegerProperty();
+        private IntegerProperty periodEnd = new SimpleIntegerProperty();
+        private IntegerProperty intervalStart = new SimpleIntegerProperty();
+        private IntegerProperty interval = new SimpleIntegerProperty();
+        private IntegerProperty lastDayOfWeek = new SimpleIntegerProperty();
+        private ListProperty<Object> onValues = new SimpleListProperty<>();
+
+        public String getSelectedFieldExpression() {
+            RadioButton rb = (RadioButton) selectedFieldExpression.get();
+            if (rb != null) {
+                return getRadioButtonFieldExp(rb);
+            }
+            return null;
         }
 
         public FieldExpression buildFieldExpressionFromIntervalCtl() {
-            Integer start = intervalSpinnerStart.getValue();
-            Integer interval = intervalSpinner.getValue();
-            if (start != null && interval != null && interval.intValue() > 0) {
+            int start = getIntervalStart();
+            int interval = getInterval();
+            if (interval > 0) {
                 return FieldExpressionFactory.every(FieldExpressionFactory.on(start), interval);
-            } else {
-                intervalSpinner.requestFocus();
             }
             return null;
         }
 
         public FieldExpression buildFieldExpressionFromPeriodCtl() {
-            Integer from = periodSpinnerStart.getValue();
-            Integer to = periodSpinnerEnd.getValue();
-            if (from != null && to != null && from.intValue() < to.intValue()) {
-                return FieldExpressionFactory.between(from, to);
-            } else {
-                periodSpinnerEnd.requestFocus();
-            }
-            return null;
+            int from = getPeriodStart();
+            int to = getPeriodEnd();
+            return FieldExpressionFactory.between(from, to);
         }
 
         public FieldExpression buildFieldExpressionFromOnCtl() {
-            List<Integer> fieldOnNums = getCheckedOfOnExp();
+            List<Integer> fieldOnNums = getOnIntValues();
             if (!fieldOnNums.isEmpty()) {
                 Collections.sort(fieldOnNums);
                 List<FieldExpression> expressions = new ArrayList<>(fieldOnNums.size());
@@ -603,53 +738,80 @@ public class CronController {
             return null;
         }
 
-        public FlowPane getOnExpCheckboxPane() {
-            return onExpCheckboxPane;
+        public FieldExpression buildFieldExpressionLastDayOfWeek() {
+            int lastDayOfWeek = getLastDayOfWeek();
+            if (lastDayOfWeek > 0) {
+                FieldExpressionFactory.on(lastDayOfWeek, SpecialChar.L);
+            }
+            return null;
         }
 
-        public void setOnExpCheckboxPane(FlowPane onExpCheckboxPane) {
-            this.onExpCheckboxPane = onExpCheckboxPane;
+        public FieldExpression buildFieldExpressionIndexDayOfWeek() {
+            int start = getIntervalStart();
+            int end = getInterval();
+            if (start > 0 && end > 0) {
+                return FieldExpressionFactory.on(start, SpecialChar.HASH, end);
+            }
+            return null;
         }
 
-        public ToggleGroup getFieldExpToggleGrp() {
-            return fieldExpToggleGrp;
+        public ObjectProperty<Toggle> selectedFieldExpression() {
+            return selectedFieldExpression;
         }
 
-        public void setFieldExpToggleGrp(ToggleGroup fieldExpToggleGrp) {
-            this.fieldExpToggleGrp = fieldExpToggleGrp;
+        public int getPeriodStart() {
+            return periodStart.get();
         }
 
-        public Spinner<Integer> getPeriodSpinnerStart() {
-            return periodSpinnerStart;
+        public IntegerProperty periodStartProperty() {
+            return periodStart;
         }
 
-        public void setPeriodSpinnerStart(Spinner<Integer> periodSpinnerStart) {
-            this.periodSpinnerStart = periodSpinnerStart;
+        public int getPeriodEnd() {
+            return periodEnd.get();
         }
 
-        public Spinner<Integer> getPeriodSpinnerEnd() {
-            return periodSpinnerEnd;
+        public IntegerProperty periodEndProperty() {
+            return periodEnd;
         }
 
-        public void setPeriodSpinnerEnd(Spinner<Integer> periodSpinnerEnd) {
-            this.periodSpinnerEnd = periodSpinnerEnd;
+        public int getIntervalStart() {
+            return intervalStart.get();
         }
 
-        public Spinner<Integer> getIntervalSpinnerStart() {
-            return intervalSpinnerStart;
+        public IntegerProperty intervalStartProperty() {
+            return intervalStart;
         }
 
-        public void setIntervalSpinnerStart(Spinner<Integer> intervalSpinnerStart) {
-            this.intervalSpinnerStart = intervalSpinnerStart;
+        public int getInterval() {
+            return interval.get();
         }
 
-        public Spinner<Integer> getIntervalSpinner() {
-            return intervalSpinner;
+        public IntegerProperty intervalProperty() {
+            return interval;
         }
 
-        public void setIntervalSpinner(Spinner<Integer> intervalSpinner) {
-            this.intervalSpinner = intervalSpinner;
+        public int getLastDayOfWeek() {
+            return lastDayOfWeek.get();
         }
 
+        public IntegerProperty lastDayOfWeekProperty() {
+            return lastDayOfWeek;
+        }
+
+        public List<Integer> getOnIntValues() {
+            List<Object> objs = onValues.get();
+            if (objs != null) {
+                List<Integer> intValues = new ArrayList<>(objs.size());
+                objs.forEach(o -> intValues.add(Integer.valueOf(o.toString())));
+                return intValues;
+            }
+            return null;
+        }
+
+        public ListProperty<Object> onValuesProperty() {
+            return onValues;
+        }
     }
+
 }

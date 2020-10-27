@@ -51,7 +51,6 @@ public class MainController {
     private ObservableList<ToolPlugin> toolPlugins = FXCollections.observableArrayList();
 
     public MainController() {
-        // Iterator<ToolPlugin> it = SpiFactory.getBeans(ToolPlugin.class);
         ServiceLoader<ToolPlugin> sloader = ServiceLoader.load(ToolPlugin.class);
         Iterator<ToolPlugin> it = sloader.iterator();
         while (it.hasNext()) {

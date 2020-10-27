@@ -7,7 +7,7 @@ package org.jflame.devAide.component;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jflame.devAide.util.UIComponents;
+import com.jfoenix.controls.JFXDecorator;
 
 /*
  * import com.jfoenix.controls.JFXButton; import com.jfoenix.controls.JFXDecorator; import com.jfoenix.svg.SVGGlyph;
@@ -30,7 +30,6 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
@@ -661,13 +660,4 @@ public class MyDecorator extends VBox {
         return graphic;
     }
 
-    public static MyDecorator create(Stage stage, Parent parent, String title, String icon) {
-        MyDecorator decorator = new MyDecorator(stage, parent, false, true, true);
-        decorator.setCustomMaximize(true);
-        decorator.setTitle(title);
-        if (icon != null) {
-            decorator.setGraphic(UIComponents.createImageView(icon, 16, 16));
-        }
-        return decorator;
-    }
 }

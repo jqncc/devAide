@@ -5,20 +5,39 @@ import org.jflame.devAide.AppContext;
 import org.jflame.devAide.component.MyIntegerSpinnerValueFactory;
 import org.jflame.devAide.component.convertor.IntFieldFormatter;
 
+import com.jfoenix.controls.JFXAlert;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDecorator;
+import com.jfoenix.controls.JFXDialogLayout;
+
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  * 提供一些控件的便捷方法
  *
  * @author yucan.zhang
  */
-public final class UIComponents {
+public final class UIUtils {
+
+    public static JFXDecorator decorator(Stage stage, Parent parent, String title, String icon) {
+        JFXDecorator decorator = new JFXDecorator(stage, parent, false, true, true);
+        decorator.setCustomMaximize(true);
+        decorator.setTitle(title);
+        if (icon != null) {
+            decorator.setGraphic(UIUtils.createImageView(icon, 16, 16));
+        }
+        return decorator;
+    }
 
     /**
      * 用给定的图片路径创建一个ImageView
@@ -69,6 +88,7 @@ public final class UIComponents {
 
     public static Alert createAlert(String errorMsg) {
         Alert alert = new Alert(AlertType.INFORMATION, errorMsg, ButtonType.OK);
+
         /* alert.getDialogPane()
                 .setStyle("-fx-background-color:#fff;-fx-border-width:1px;-fx-border-color:#ccc");
         alert.setHeaderText(null);
@@ -91,12 +111,30 @@ public final class UIComponents {
         return alert;
     }
 
-    public static void showWarnAlert(String warnMsg) {
+    public static void warnAlert(String warnMsg) {
         new Alert(AlertType.WARNING, warnMsg, ButtonType.OK).show();
     }
 
-    public static void showErrorAlert(String errorMsg) {
-        new Alert(AlertType.ERROR, errorMsg, ButtonType.OK).show();
+    public static void errorAlert(String errorMsg) {
+        // new Alert(AlertType.ERROR, errorMsg, ButtonType.OK).show();
+        alert("错误", errorMsg).showAndWait();
+    }
+
+    public static JFXAlert<Void> alert(String title, String message) {
+        JFXAlert<Void> alert = new JFXAlert<>(AppContext.getInstance()
+                .mainStage());
+        alert.initModality(Modality.WINDOW_MODAL);
+        alert.setOverlayClose(false);
+        JFXDialogLayout layout = new JFXDialogLayout();
+        layout.setHeading(new Label("提示"));
+        layout.setBody(new Label(message));
+        JFXButton closeButton = new JFXButton("确定");
+        closeButton.getStyleClass()
+                .add("dialog-accept");
+        closeButton.setOnAction(event -> alert.close());
+        layout.setActions(closeButton);
+        alert.setContent(layout);
+        return alert;
     }
 
     /**
@@ -161,5 +199,17 @@ public final class UIComponents {
         spinner.setValueFactory(new MyIntegerSpinnerValueFactory(min, max, initialValue, amountToStepBy));
         spinner.getEditor()
                 .setTextFormatter(new IntFieldFormatter());
+    }
+
+    /**
+     * 给spinner设置值
+     * 
+     * @param <T>
+     * @param spinner
+     * @param value
+     */
+    public static <T> void setValue(Spinner<T> spinner, T value) {
+        spinner.getValueFactory()
+                .setValue(value);
     }
 }

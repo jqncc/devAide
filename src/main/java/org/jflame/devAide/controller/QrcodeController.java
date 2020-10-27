@@ -36,10 +36,9 @@ import org.jflame.commons.valid.ValidatorHelper;
 import org.jflame.devAide.AppContext;
 import org.jflame.devAide.component.FileField;
 import org.jflame.devAide.component.MyGraphicValidationDecoration;
-import org.jflame.devAide.component.convertor.IntFieldFormatter;
 import org.jflame.devAide.component.convertor.NVPairConverter;
 import org.jflame.devAide.model.BarcodeInfo;
-import org.jflame.devAide.util.UIComponents;
+import org.jflame.devAide.util.UIUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +76,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -202,13 +200,8 @@ public class QrcodeController {
 
         codeImageViwer.setVisible(false);
         // spinner
-        spnBarcodeSize
-                .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(80, 1000, QRCODE_DEFAULT_WIDTH));
-        spnBarcodeSize.getEditor()
-                .setTextFormatter(new IntFieldFormatter());// 限制只能输入数字
-        spnLogoSize.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(20, 400, LOGO_DEFAULT_WIDTH));
-        spnLogoSize.getEditor()
-                .setTextFormatter(new IntFieldFormatter());
+        UIUtils.setSpinnerForInteger(spnBarcodeSize, 80, 1000, QRCODE_DEFAULT_WIDTH);
+        UIUtils.setSpinnerForInteger(spnLogoSize, 20, 400, LOGO_DEFAULT_WIDTH);
 
         historyView.setItems(barcodeRecords);
         historyView.setCellFactory((ListView<BarcodeInfo> l) -> new BarcodeRecordListCell());
@@ -313,7 +306,7 @@ public class QrcodeController {
                     logoSize = LOGO_DEFAULT_WIDTH;
                 }
                 if (logoSize >= barcodeWidth * 0.5) {
-                    UIComponents.showWarnAlert("Logo尺寸过大影响识别率真,请重新调整大小");
+                    UIUtils.warnAlert("Logo尺寸过大影响识别率真,请重新调整大小");
                     return;
                 }
             }
@@ -335,7 +328,7 @@ public class QrcodeController {
         }
 
         Color fgColor = cpickerBarcodeFg.getValue();
-        int offColor = UIComponents.colorToArgb(cpickerBarcodeBg.getValue());// 背景色
+        int offColor = UIUtils.colorToArgb(cpickerBarcodeBg.getValue());// 背景色
         int onColor;
 
         codeInfo.setWidth(barcodeWidth);
@@ -350,9 +343,9 @@ public class QrcodeController {
             if (is2Dbarcode && logoPath != null) {
                 // 在要设置logo时,前景色纯黑色时微调一点,避免zxing会把logo颜色变为黑白的bug
                 if (fgColor == Color.BLACK) {
-                    onColor = UIComponents.colorToArgb(Color.valueOf("0x000001FF"));
+                    onColor = UIUtils.colorToArgb(Color.valueOf("0x000001FF"));
                 } else {
-                    onColor = UIComponents.colorToArgb(cpickerBarcodeFg.getValue());
+                    onColor = UIUtils.colorToArgb(cpickerBarcodeFg.getValue());
                 }
                 MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(onColor, offColor);
                 BufferedImage barcodeBufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix,
@@ -364,7 +357,7 @@ public class QrcodeController {
                 codeInfo.setLogoBorder(chbxLogoBorder.isSelected());
                 ImageIO.write(bufferedImage, IMG_FORMAT_JPG, newBarcodePath.toFile());
             } else {
-                onColor = UIComponents.colorToArgb(cpickerBarcodeFg.getValue());
+                onColor = UIUtils.colorToArgb(cpickerBarcodeFg.getValue());
                 MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(onColor, offColor);
                 MatrixToImageWriter.writeToPath(bitMatrix, IMG_FORMAT_JPG, newBarcodePath, matrixToImageConfig);
             }
@@ -387,7 +380,7 @@ public class QrcodeController {
                 }
             });
         } catch (WriterException | IOException | IllegalArgumentException e) {
-            UIComponents.createExDialog("生成条码异常", e)
+            UIUtils.createExDialog("生成条码异常", e)
                     .show();
             logger.error("生成条码异常,内容:{},ex:{}", content, e.getMessage());
         }
@@ -442,7 +435,7 @@ public class QrcodeController {
                 bufferedImage.flush();
                 parseFileChooser.setInitialDirectory(selectedBarcodeFile.getParentFile());
             } catch (IOException | NotFoundException e) {
-                UIComponents.createExDialog("解码失败", e)
+                UIUtils.createExDialog("解码失败", e)
                         .show();
             }
         }
@@ -465,7 +458,7 @@ public class QrcodeController {
                                         .toURL()
                                         .toExternalForm());
                     } catch (IOException e1) {
-                        UIComponents.showErrorAlert("当前操作系统不支持该操作,请复制路径打开");
+                        UIUtils.errorAlert("当前操作系统不支持该操作,请复制路径打开");
                     }
                 }
             } catch (Exception e) {
@@ -503,7 +496,7 @@ public class QrcodeController {
                 qrcodeCacheDir.toFile()
                         .setWritable(true);
             } catch (IOException e) {
-                UIComponents.createExDialog("无法创建二维码缓存目录" + qrcodeCacheDir, e)
+                UIUtils.createExDialog("无法创建二维码缓存目录" + qrcodeCacheDir, e)
                         .show();
             }
         }

@@ -35,8 +35,11 @@
 			<artifactId>javafx-web</artifactId>
 			<version>${jfx.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>com.jfoenix</groupId> <artifactId>jfoenix</artifactId> <version>${jfoenix.version}</version> 
-			</dependency> -->
+		<dependency>
+			<groupId>com.jfoenix</groupId>
+			<artifactId>jfoenix</artifactId>
+			<version>${jfoenix.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.controlsfx</groupId>
 			<artifactId>controlsfx</artifactId>
@@ -110,9 +113,12 @@
 						<id>default-cli</id>
 						<configuration>
 							<options>
+								<option>-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=localhost:8000</option>
 								<option>-Djava.library.path=c:\tmp</option>
 								<option>--add-opens</option>
 								<option>javafx.graphics/javafx.scene=org.controlsfx.controls</option>
+								<option>--add-exports</option>
+								<option>javafx.base/com.sun.javafx.event=com.jfoenix</option>
 							</options>
 							<mainClass>org.jflame.devAide.App</mainClass>
 							<executable>D:/Java/jdk-11.0.3/bin/java</executable>
@@ -126,6 +132,8 @@
 								<option>-Djava.library.path=c:\tmp</option>
 								<option>--add-opens</option>
 								<option>javafx.graphics/javafx.scene=org.controlsfx.controls</option>
+								<option>--add-exports</option>
+								<option>javafx.base/com.sun.javafx.event=com.jfoenix</option>
 							</options>
 							<mainClass>org.jflame.devAide.App</mainClass>
 							<executable>D:/Java/jdk-11.0.3/bin/java</executable>

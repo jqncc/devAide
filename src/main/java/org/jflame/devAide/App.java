@@ -2,8 +2,10 @@ package org.jflame.devAide;
 
 import java.io.IOException;
 
-import org.jflame.devAide.component.MyDecorator;
 import org.jflame.devAide.util.FxUtils;
+import org.jflame.devAide.util.UIUtils;
+
+import com.jfoenix.controls.JFXDecorator;
 
 // import com.jfoenix.assets.JFoenixResources;
 import javafx.application.Application;
@@ -25,13 +27,12 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         Parent parent = FxUtils.loadFXML("main");
-        MyDecorator decorator = MyDecorator.create(stage, parent, "DevAide - 开发辅助工具", "/images/logo16X16.png");
+        stage.setResizable(false);
+        stage.setMinWidth(1024);
+        stage.setMinHeight(768);
+        JFXDecorator decorator = UIUtils.decorator(stage, parent, "DevAide - 开发辅助工具", "/images/logo16X16.png");
 
         Scene scene = new Scene(decorator, 1366, 800);
-        // JFoenixResources
-        // String css_jfoenix_font = ResourceUtils.absUrl("/css/jfoenix-fonts.css");
-        // String css_jfoenix_design = ResourceUtils.absUrl("/css/jfoenix-design.css");
-        // String css_main = ResourceUtils.absUrl("/css/jfmain.css");
         scene.getStylesheets()
                 .addAll(AppContext.getStyleFiles());
         stage.setScene(scene);
@@ -48,6 +49,7 @@ public class App extends Application {
                 System.exit(0);
             }
         });
+
         instance = this;
         AppContext.getInstance()
                 .setMainStage(stage);

@@ -13,11 +13,11 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import org.jflame.devAide.component.CheckBoxFlowPane?>
 
 <SplitPane id="regexSplitPane" dividerPositions="0.6590296495956873" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600" minWidth="800" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.CronController">
   <items>
@@ -25,7 +25,7 @@
          <children>
             <VBox prefHeight="598.0" prefWidth="523.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <TabPane prefHeight="425.0" styleClass="cronTabPane" prefWidth="523.0" tabClosingPolicy="UNAVAILABLE" tabMinHeight="26.0" tabMinWidth="30.0">
+                  <TabPane prefHeight="425.0" prefWidth="523.0" styleClass="cronTabPane" tabClosingPolicy="UNAVAILABLE" tabMinHeight="26.0" tabMinWidth="30.0">
                     <tabs>
                       <Tab closable="false" text="秒">
                         <content>
@@ -43,14 +43,14 @@
                                           <RowConstraints fillHeight="false" maxHeight="190.0" minHeight="150.0" prefHeight="190.0" valignment="TOP" vgrow="ALWAYS" />
                                       </rowConstraints>
                                        <children>
-                                          <RadioButton fx:id="secPerRadioBtn" mnemonicParsing="false" selected="true" text="每秒">
+                                          <RadioButton fx:id="secPerRadioBtn" mnemonicParsing="false" selected="true" text="每秒(*)">
                                              <toggleGroup>
                                                 <ToggleGroup fx:id="secondGrp" />
                                              </toggleGroup>
                                           </RadioButton>
                                           <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="1">
                                              <children>
-                                                <RadioButton fx:id="secPeriodRadioBtn" mnemonicParsing="false" text="区间,  从" toggleGroup="$secondGrp" />
+                                                <RadioButton fx:id="secPeriodRadioBtn" mnemonicParsing="false" text="范围(m-n),  从" toggleGroup="$secondGrp" />
                                                 <Spinner fx:id="secPeriodSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="到" />
                                                 <Spinner fx:id="secPeriodSpinnerEnd" editable="true" prefWidth="80.0" />
@@ -59,15 +59,15 @@
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="2">
                                              <children>
-                                                <RadioButton fx:id="secIntervalRadioBtn" mnemonicParsing="false" text="间隔,  从" toggleGroup="$secondGrp" />
+                                                <RadioButton fx:id="secIntervalRadioBtn" mnemonicParsing="false" text="周期(m/n),  从" toggleGroup="$secondGrp" />
                                                 <Spinner fx:id="secIntervalSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="秒开始, 每" />
                                                 <Spinner fx:id="secIntervalSpinner" editable="true" prefWidth="80.0" />
                                                 <Label text="秒执行一次" />
                                              </children>
                                           </HBox>
-                                          <RadioButton fx:id="secOnRadioBtn" mnemonicParsing="false" text="指定" toggleGroup="$secondGrp" GridPane.rowIndex="3" />
-                                          <FlowPane fx:id="secondFlowPane" prefHeight="190.0" prefWidth="503.0" styleClass="cronFlowPane" GridPane.rowIndex="4" />
+                                          <RadioButton fx:id="secOnRadioBtn" mnemonicParsing="false" text="定点(m,n)" toggleGroup="$secondGrp" GridPane.rowIndex="3" />
+                                          <CheckBoxFlowPane useText="true" fx:id="secondFlowPane" prefHeight="190.0" prefWidth="503.0" styleClass="cronFlowPane" GridPane.rowIndex="4" />
                                        </children>
                                     </GridPane>
                                  </children>
@@ -90,14 +90,14 @@
                                           <RowConstraints fillHeight="false" maxHeight="190.0" minHeight="150.0" prefHeight="190.0" valignment="TOP" vgrow="ALWAYS" />
                                       </rowConstraints>
                                        <children>
-                                          <RadioButton fx:id="minPerRadioBtn" mnemonicParsing="false" selected="true" text="每分钟">
+                                          <RadioButton fx:id="minPerRadioBtn" mnemonicParsing="false" selected="true" text="每分钟(*)">
                                              <toggleGroup>
                                                 <ToggleGroup fx:id="minuteGrp" />
                                              </toggleGroup>
                                           </RadioButton>
                                           <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="1">
                                              <children>
-                                                <RadioButton fx:id="minPeriodRadioBtn" mnemonicParsing="false" text="区间,  从" toggleGroup="$minuteGrp" />
+                                                <RadioButton fx:id="minPeriodRadioBtn" mnemonicParsing="false" text="范围(m-n),  从" toggleGroup="$minuteGrp" />
                                                 <Spinner fx:id="minPeriodSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="到" />
                                                 <Spinner fx:id="minPeriodSpinnerEnd" editable="true" prefWidth="80.0" />
@@ -106,15 +106,15 @@
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="2">
                                              <children>
-                                                <RadioButton fx:id="minIntervalRadioBtn" mnemonicParsing="false" text="间隔,  从" toggleGroup="$minuteGrp" />
+                                                <RadioButton fx:id="minIntervalRadioBtn" mnemonicParsing="false" text="周期(m/n),  从" toggleGroup="$minuteGrp" />
                                                 <Spinner fx:id="minIntervalSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="分钟开始, 每" />
                                                 <Spinner fx:id="minIntervalSpinner" editable="true" prefWidth="80.0" />
                                                 <Label text="分钟执行一次" />
                                              </children>
                                           </HBox>
-                                          <RadioButton fx:id="minOnRadioBtn" mnemonicParsing="false" text="指定" toggleGroup="$minuteGrp" GridPane.rowIndex="3" />
-                                          <FlowPane fx:id="minuteFlowPane" prefHeight="190.0" prefWidth="503.0" styleClass="cronFlowPane" GridPane.rowIndex="4" />
+                                          <RadioButton fx:id="minOnRadioBtn" mnemonicParsing="false" text="定点(m,n)" toggleGroup="$minuteGrp" GridPane.rowIndex="3" />
+                                          <CheckBoxFlowPane useText="true" fx:id="minuteFlowPane" prefHeight="190.0" prefWidth="503.0" styleClass="cronFlowPane" GridPane.rowIndex="4" />
                                        </children>
                                     </GridPane>
                                  </children>
@@ -137,14 +137,14 @@
                                           <RowConstraints fillHeight="false" maxHeight="190.0" minHeight="150.0" prefHeight="190.0" valignment="TOP" vgrow="ALWAYS" />
                                       </rowConstraints>
                                        <children>
-                                          <RadioButton fx:id="hourPerRadioBtn" mnemonicParsing="false" selected="true" text="每小时">
+                                          <RadioButton fx:id="hourPerRadioBtn" mnemonicParsing="false" selected="true" text="每小时(*)">
                                              <toggleGroup>
                                                 <ToggleGroup fx:id="hourGrp" />
                                              </toggleGroup>
                                           </RadioButton>
                                           <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="1">
                                              <children>
-                                                <RadioButton fx:id="hourPeriodRadioBtn" mnemonicParsing="false" text="区间,  从" toggleGroup="$hourGrp" />
+                                                <RadioButton fx:id="hourPeriodRadioBtn" mnemonicParsing="false" text="范围(m-n),  从" toggleGroup="$hourGrp" />
                                                 <Spinner fx:id="hourPeriodSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="到" />
                                                 <Spinner fx:id="hourPeriodSpinnerEnd" editable="true" prefWidth="80.0" />
@@ -153,15 +153,15 @@
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="2">
                                              <children>
-                                                <RadioButton fx:id="hourIntervalRadioBtn" mnemonicParsing="false" text="间隔,  从" toggleGroup="$hourGrp" />
+                                                <RadioButton fx:id="hourIntervalRadioBtn" mnemonicParsing="false" text="周期(m/n),  从" toggleGroup="$hourGrp" />
                                                 <Spinner fx:id="hourIntervalSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="时开始, 每" />
                                                 <Spinner fx:id="hourIntervalSpinner" editable="true" prefWidth="80.0" />
                                                 <Label text="小时执行一次" />
                                              </children>
                                           </HBox>
-                                          <RadioButton fx:id="hourOnRadioBtn" mnemonicParsing="false" text="指定" toggleGroup="$hourGrp" GridPane.rowIndex="3" />
-                                          <FlowPane fx:id="hourFlowPane" prefHeight="150.0" prefWidth="503.0" styleClass="cronFlowPane" GridPane.rowIndex="4" />
+                                          <RadioButton fx:id="hourOnRadioBtn" mnemonicParsing="false" text="定点(m,n)" toggleGroup="$hourGrp" GridPane.rowIndex="3" />
+                                          <CheckBoxFlowPane useText="true" fx:id="hourFlowPane" prefHeight="150.0" prefWidth="503.0" styleClass="cronFlowPane" GridPane.rowIndex="4" />
                                        </children>
                                     </GridPane>
                                  </children>
@@ -186,14 +186,14 @@
                                           <RowConstraints fillHeight="false" maxHeight="190.0" minHeight="120" valignment="TOP" vgrow="ALWAYS" />
                                       </rowConstraints>
                                        <children>
-                                          <RadioButton fx:id="dayPerRadioBtn" mnemonicParsing="false" selected="true" text="每天">
+                                          <RadioButton fx:id="dayPerRadioBtn" mnemonicParsing="false" selected="true" text="每天(*)">
                                              <toggleGroup>
                                                 <ToggleGroup fx:id="dayGrp" />
                                              </toggleGroup>
                                           </RadioButton>
                                           <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="2">
                                              <children>
-                                                <RadioButton fx:id="dayPeriodRadioBtn" mnemonicParsing="false" text="区间,  从" toggleGroup="$dayGrp" />
+                                                <RadioButton fx:id="dayPeriodRadioBtn" mnemonicParsing="false" text="范围(m-n),  从" toggleGroup="$dayGrp" />
                                                 <Spinner fx:id="dayPeriodSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="到" />
                                                 <Spinner fx:id="dayPeriodSpinnerEnd" editable="true" prefWidth="80.0" />
@@ -202,17 +202,17 @@
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="3">
                                              <children>
-                                                <RadioButton fx:id="dayIntervalRadioBtn" mnemonicParsing="false" text="间隔,  从" toggleGroup="$dayGrp" />
+                                                <RadioButton fx:id="dayIntervalRadioBtn" mnemonicParsing="false" text="周期(m/n),  从" toggleGroup="$dayGrp" />
                                                 <Spinner fx:id="dayIntervalSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="号开始, 每" />
                                                 <Spinner fx:id="dayIntervalSpinner" editable="true" prefWidth="80.0" />
                                                 <Label text="天执行一次" />
                                              </children>
                                           </HBox>
-                                          <RadioButton fx:id="dayOnRadioBtn" mnemonicParsing="false" text="指定" toggleGroup="$dayGrp" GridPane.rowIndex="5" />
-                                          <FlowPane fx:id="dayFlowPane" prefHeight="111.0" prefWidth="496.0" styleClass="cronFlowPane" GridPane.rowIndex="6" />
-                                          <RadioButton fx:id="dayLastRadioBtn" mnemonicParsing="false" text="每月最后一天" GridPane.rowIndex="4" />
-                                          <RadioButton fx:id="dayNoSpecifiedRadioBtn" mnemonicParsing="false" text="不指定" GridPane.rowIndex="1" />
+                                          <RadioButton fx:id="dayOnRadioBtn" mnemonicParsing="false" text="定点(m,n)" toggleGroup="$dayGrp" GridPane.rowIndex="5" />
+                                          <RadioButton fx:id="dayLastRadioBtn" mnemonicParsing="false" text="每月最后一天(L)" GridPane.rowIndex="4" toggleGroup="$dayGrp"/>
+                                          <RadioButton fx:id="dayNoSpecifiedRadioBtn" mnemonicParsing="false" text="不指定(?)" GridPane.rowIndex="1" toggleGroup="$dayGrp"/>
+                                          <CheckBoxFlowPane useText="true" fx:id="dayFlowPane" prefHeight="111.0" prefWidth="496.0" styleClass="cronFlowPane" GridPane.rowIndex="6" />
                                        </children>
                                     </GridPane>
                                  </children>
@@ -235,14 +235,14 @@
                                           <RowConstraints fillHeight="false" maxHeight="120.0" minHeight="120.0" prefHeight="120.0" valignment="TOP" vgrow="ALWAYS" />
                                       </rowConstraints>
                                        <children>
-                                          <RadioButton fx:id="monthPerRadioBtn" mnemonicParsing="false" selected="true" text="每月">
+                                          <RadioButton fx:id="monthPerRadioBtn" mnemonicParsing="false" selected="true" text="每月(*)">
                                              <toggleGroup>
                                                 <ToggleGroup fx:id="monthGrp" />
                                              </toggleGroup>
                                           </RadioButton>
                                           <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="1">
                                              <children>
-                                                <RadioButton fx:id="monthPeriodRadioBtn" mnemonicParsing="false" text="区间,  从" toggleGroup="$monthGrp" />
+                                                <RadioButton fx:id="monthPeriodRadioBtn" mnemonicParsing="false" text="范围(m-n),  从" toggleGroup="$monthGrp" />
                                                 <Spinner fx:id="monthPeriodSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="到" />
                                                 <Spinner fx:id="monthPeriodSpinnerEnd" editable="true" prefWidth="80.0" />
@@ -251,22 +251,22 @@
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="2">
                                              <children>
-                                                <RadioButton fx:id="monthIntervalRadioBtn" mnemonicParsing="false" text="间隔,  从" toggleGroup="$monthGrp" />
+                                                <RadioButton fx:id="monthIntervalRadioBtn" mnemonicParsing="false" text="周期(m/n),  从" toggleGroup="$monthGrp" />
                                                 <Spinner fx:id="monthIntervalSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="月开始, 每" />
                                                 <Spinner fx:id="monthIntervalSpinner" editable="true" prefWidth="80.0" />
                                                 <Label text="月执行一次" />
                                              </children>
                                           </HBox>
-                                          <RadioButton fx:id="monthOnRadioBtn" mnemonicParsing="false" text="指定" toggleGroup="$monthGrp" GridPane.rowIndex="3" />
-                                          <FlowPane fx:id="monthFlowPane" prefHeight="120.0" prefWidth="503.0" styleClass="cronFlowPane" GridPane.rowIndex="4" />
+                                          <RadioButton fx:id="monthOnRadioBtn" mnemonicParsing="false" text="定点(m,n)" toggleGroup="$monthGrp" GridPane.rowIndex="3" />
+                                          <CheckBoxFlowPane useText="true" fx:id="monthFlowPane" prefHeight="120.0" prefWidth="503.0" styleClass="cronFlowPane" GridPane.rowIndex="4" />
                                        </children>
                                     </GridPane>
                                  </children>
                               </AnchorPane>
                           </content>
                         </Tab>
-                        <Tab closable="false" text="周">
+                        <Tab closable="false" text="星期">
                           <content>
                             <AnchorPane minHeight="341.0" minWidth="0.0" prefHeight="300.0" prefWidth="500.0">
                                  <children>
@@ -276,22 +276,22 @@
                                       </columnConstraints>
                                       <rowConstraints>
                                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                         <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints fillHeight="false" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints fillHeight="false" maxHeight="190.0" minHeight="120" valignment="TOP" vgrow="ALWAYS" />
+                                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints fillHeight="false" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints fillHeight="false" maxHeight="190.0" minHeight="120" valignment="TOP" vgrow="ALWAYS" />
                                       </rowConstraints>
                                        <children>
-                                          <RadioButton fx:id="weekPerRadioBtn" mnemonicParsing="false" selected="true" text="每周">
+                                          <RadioButton fx:id="weekPerRadioBtn" mnemonicParsing="false"  text="每星期(*)">
                                              <toggleGroup>
                                                 <ToggleGroup fx:id="weekGrp" />
                                              </toggleGroup>
                                           </RadioButton>
                                           <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="2">
                                              <children>
-                                                <RadioButton fx:id="weekPeriodRadioBtn" mnemonicParsing="false" text="区间,  从星期" toggleGroup="$dayGrp" />
+                                                <RadioButton fx:id="weekPeriodRadioBtn" mnemonicParsing="false" text="范围(m-n),  从星期" toggleGroup="$weekGrp" />
                                                 <Spinner fx:id="weekPeriodSpinnerStart" editable="true" prefWidth="80.0" />
                                                 <Label text="到" />
                                                 <Spinner fx:id="weekPeriodSpinnerEnd" editable="true" prefWidth="80.0" />
@@ -299,21 +299,21 @@
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="3">
                                              <children>
-                                                <RadioButton fx:id="weekIntervalRadioBtn" mnemonicParsing="false" text="第" toggleGroup="$weekGrp" />
+                                                <RadioButton fx:id="weekIntervalRadioBtn" mnemonicParsing="false" text="索引(m#n),当月第" toggleGroup="$weekGrp" />
                                                 <Spinner fx:id="weekIntervalSpinnerStart" editable="true" prefWidth="80.0" />
-                                                <Label text="周的星期" />
+                                                <Label text="个星期" />
                                                 <Spinner fx:id="weekIntervalSpinner" editable="true" prefWidth="80.0" />
                                              </children>
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="4">
                                              <children>
-                                                <RadioButton fx:id="weekLastRadioBtn" mnemonicParsing="false" text="每月最后一个星期" />
-                                                <Spinner fx:id="weekLastSpinnerStart" editable="true" prefWidth="80.0" />
+                                                <RadioButton fx:id="weekLastRadioBtn" mnemonicParsing="false" text="当月最后一个星期(nL)" toggleGroup="$weekGrp"/>
+                                                <Spinner fx:id="weekLastSpinner" editable="true" prefWidth="80.0" />
                                              </children>
                                           </HBox>
-                                          <RadioButton fx:id="weekOnRadioBtn" mnemonicParsing="false" text="指定" toggleGroup="$weekGrp" GridPane.rowIndex="5" />
-                                          <FlowPane fx:id="weekFlowPane" prefHeight="111.0" prefWidth="496.0" styleClass="cronFlowPane" GridPane.rowIndex="6" />
-                                          <RadioButton fx:id="weekNoSpecifiedRadioBtn" mnemonicParsing="false" text="不指定" GridPane.rowIndex="1" />
+                                          <RadioButton fx:id="weekOnRadioBtn" mnemonicParsing="false" text="定点(m,n)" toggleGroup="$weekGrp" GridPane.rowIndex="5" />
+                                          <RadioButton fx:id="weekNoSpecifiedRadioBtn" mnemonicParsing="false" selected="true" text="不指定(?)" GridPane.rowIndex="1" toggleGroup="$weekGrp" />
+                                          <CheckBoxFlowPane useText="true" fx:id="weekFlowPane" prefHeight="111.0" prefWidth="496.0" styleClass="cronFlowPane" GridPane.rowIndex="6" />
                                        </children>
                                     </GridPane>
                                  </children>
@@ -322,7 +322,39 @@
                         </Tab>
                         <Tab closable="false" text="年">
                           <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                             <AnchorPane minHeight="341.0" minWidth="0.0" prefHeight="300.0" prefWidth="500.0">
+                                 <children>
+                                    <GridPane layoutX="14.0" layoutY="8.0" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="503.0" vgap="8.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="496.0" prefWidth="496.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints fillHeight="false" maxHeight="120.0" minHeight="120.0" prefHeight="120.0" valignment="TOP" vgrow="ALWAYS" />
+                                      </rowConstraints>
+                                       <children>
+                                          <RadioButton fx:id="yearPerRadioBtn" mnemonicParsing="false" text="每年(*)">
+                                           <toggleGroup>
+                                                <ToggleGroup fx:id="yearGrp" />
+                                             </toggleGroup>
+                                           </RadioButton>
+                                          <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="100.0" prefWidth="496.0" spacing="6.0" GridPane.rowIndex="1">
+                                             <children>
+                                                <RadioButton fx:id="yearPeriodRadioBtn" mnemonicParsing="false" text="范围(m-n),  从" toggleGroup="$yearGrp" />
+                                                <Spinner fx:id="yearPeriodSpinnerStart" editable="true" prefWidth="90.0" />
+                                                <Label text="到" />
+                                                <Spinner fx:id="yearPeriodSpinnerEnd" editable="true" prefWidth="90.0" />
+                                                <Label text="年" />
+                                             </children>
+                                          </HBox>
+                                          <RadioButton fx:id="yearOnRadioBtn" mnemonicParsing="false" text="定点(m,n)" toggleGroup="$yearGrp" GridPane.rowIndex="2" />
+                                          <CheckBoxFlowPane useText="true" fx:id="yearFlowPane" prefHeight="120.0" prefWidth="503.0" styleClass="yearFlowPane" GridPane.rowIndex="3" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </AnchorPane>
                           </content>
                         </Tab>
                     </tabs>
@@ -331,12 +363,13 @@
                      <children>
                         <Label text="CRON表达式: " />
                         <TextField fx:id="cronTextField" />
-                        <Button mnemonicParsing="false" styleClass="flatBtn,btn-info" text="反解析" />
+                        <Button mnemonicParsing="false" text="生成表达式" styleClass="flatBtn,btn-success" fx:id="btnGen"/>
+                        <Button mnemonicParsing="false" styleClass="flatBtn,btn-info" text="反解析" fx:id="btnParse"/>
                      </children>
                   </HBox>
-                  <VBox styleClass="crontextbox" prefHeight="200.0" prefWidth="513.0">
+                  <VBox prefHeight="200.0" prefWidth="513.0" styleClass="crontextbox">
                      <children>
-                        <Label text="最近10次运行时间：" />
+                        <Label text="最近8次运行时间：" />
                         <TextArea fx:id="nextTimes" prefHeight="133.0" prefWidth="513.0" />
                      </children>
                   </VBox>

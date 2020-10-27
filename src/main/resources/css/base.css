@@ -101,6 +101,24 @@
     -fx-padding: 0.250em 0.666em 0.5em 0.666em; 
 }
 
+.check-box .box {
+-fx-background-color: white;
+-fx-border-color:-fx-box-border;
+-fx-border-radius:0px; 
+-fx-background-insets: 0;
+-fx-background-radius: 0;
+ -fx-padding: 0.15em;
+}
+
+.check-box:selected .mark {
+-fx-background-color: white;
+}
+
+.check-box:selected .box {
+-fx-background-color: #0F9D58;
+-fx-border-color:#0F9D58
+}
+
 #mainTab > .tab-header-area > .tab-header-background{
     -fx-background-color:#f5f5f5;
     -fx-border-width:0;
@@ -115,8 +133,8 @@
 }
 
 .jfx-decorator {
-   /*-fx-decorator-color: derive(#5264AE, -20%);transparent*/
-    -fx-decorator-color: #fff;
+   -fx-decorator-color: derive(#5264AE, -20%);
+    /*-fx-decorator-color: #fff;*/
     -fx-background-color:#f6f6f6;
     -fx-fill: #333;
     -fx-text-fill:white;
@@ -127,7 +145,8 @@
 }
 
 .jfx-decorator .resize-border {
-    -fx-border-color: transparent;
+    /*-fx-border-color: transparent;*/
+    -fx-border-color:  #333;
     -fx-border-width: 0 2px;
 }
 /*
@@ -141,6 +160,26 @@
 }
 .jfx-decorator-button{
 	-fx-background-color:transparent;
+}
+
+.jfx-dialog-overlay-pane {
+    -fx-background-color: rgba(0.0, 0.0, 0.0, 0.1);
+}
+
+.dialog-trigger {
+    -fx-background-color: WHITE;
+    -jfx-button-type: RAISED;
+    -fx-font-size: 14.0px;
+}
+
+.jfx-layout-heading .label {
+    -fx-font-size: 20.0px;
+}
+
+.dialog-accept {
+    -fx-text-fill: #03A9F4;
+    -fx-font-weight: BOLD;
+    -fx-padding: 0.7em 0.8em;
 }
 
 .file-field {-fx-border-width:0}
@@ -197,7 +236,7 @@
 
 /*多行输入框字体样式
  * .text-area {-fx-font-size:14px;-fx-text-fill:red} */
-.dialog-pane{-fx-border-color:#ccc;-fx-border-width: 1px;-fx-background-color:#fff;}
+/*.dialog-pane{-fx-border-color:#ccc;-fx-border-width: 1px;-fx-background-color:#fff;}*/
 /*.dialog-pane .header-panel{-fx-border-color: black;-fx-border-width: 1px}
 .dialog-pane .content {-fx-border-color: #ccc;-fx-border-width: 1px}
 .dialog-pane .button-bar  {-fx-border-color: #666;-fx-border-width: 1px}
@@ -252,11 +291,12 @@
 #usuallyRegexBox{-fx-spacing:8;-fx-padding:10 10 0 8}
 #usuallyRegexBox .label{-fx-cursor:hand;-fx-text-fill:#369}
 
-.cronFlowPane{-fx-padding:5 5 0 30;-fx-hgap:6;-fx-vgap:6}
+.cronFlowPane,.yearFlowPane{-fx-padding:5 5 0 30;-fx-hgap:8;-fx-vgap:6}
 .cronFlowPane .check-box{-fx-pref-width:50}
+.yearFlowPane .check-box{-fx-pref-width:100}
 
 .crontextbox,#cronBox{-fx-padding:15 0 0 20;-fx-spacing:10;}
 #cronBox{-fx-alignment:center-left;-fx-border-color: #ccc;-fx-border-width: 1px 0 0 0}
 #cronBox .text-field{ -fx-pref-width:250}
-
+.crontextbox .text-area{-fx-size:12px;}
 .cronTabPane .tab-label{-fx-size:18px}

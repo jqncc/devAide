@@ -34,7 +34,7 @@ public class FxUtils {
             }
             return fxmlLoader.load();
         } catch (IOException e) {
-            UIComponents.createExDialog("加载界面异常,fxml: " + fxml, e)
+            UIUtils.createExDialog("加载界面异常,fxml: " + fxml, e)
                     .show();
             logger.error("加载fxml异常" + fxml, e);
             throw new RuntimeException(e);
@@ -53,7 +53,7 @@ public class FxUtils {
             fxmlLoader.setController(controller);
             return fxmlLoader.load();
         } catch (IOException e) {
-            UIComponents.createExDialog("加载界面异常,fxml: " + fxml, e)
+            UIUtils.createExDialog("加载界面异常,fxml: " + fxml, e)
                     .show();
             logger.error("加载fxml异常" + fxml, e);
             throw new RuntimeException(e);

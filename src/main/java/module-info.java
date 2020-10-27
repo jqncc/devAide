@@ -5,6 +5,7 @@ module devAide {
     requires org.controlsfx.controls;
 
     requires java.desktop;
+    requires transitive java.sql;
     requires transitive java.xml;
     requires transitive javafx.base;
     requires transitive javafx.controls;
@@ -16,6 +17,7 @@ module devAide {
     requires jflame.commons;
     requires slf4j.api;
     requires cron.utils;
+    requires com.jfoenix;
 
     exports org.jflame.devAide.component;
     exports org.jflame.devAide.model;

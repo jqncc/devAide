@@ -12,7 +12,7 @@ import org.jflame.commons.util.MapHelper;
 import org.jflame.devAide.component.MyGraphicValidationDecoration;
 import org.jflame.devAide.util.ResourceUtils;
 import org.jflame.devAide.util.SegmentXmlUtils;
-import org.jflame.devAide.util.UIComponents;
+import org.jflame.devAide.util.UIUtils;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -24,10 +24,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Control;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
@@ -77,19 +76,25 @@ public class RegexController {
                     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
                             Boolean newValue) {
                         if (newValue) {
-                            UIComponents.show(replText);
+                            UIUtils.show(replText);
                             replText.setText(null);
                         } else {
-                            UIComponents.hide(replText);
+                            UIUtils.hide(replText);
                         }
                     }
                 });
-        chxCase.selectedProperty()
+        /*   chxCase.selectedProperty()
                 .bindBidirectional(pattenOption.caseInsensitive());
         chxMultiMode.selectedProperty()
                 .bindBidirectional(pattenOption.multiline());
         chxDotall.selectedProperty()
-                .bindBidirectional(pattenOption.dotall());
+                .bindBidirectional(pattenOption.dotall());*/
+        pattenOption.caseInsensitive()
+                .bind(chxCase.selectedProperty());
+        pattenOption.multiline()
+                .bind(chxMultiMode.selectedProperty());
+        pattenOption.dotall()
+                .bind(chxDotall.selectedProperty());
 
         initRgihtTabpane();
 
@@ -159,9 +164,9 @@ public class RegexController {
         if (MapHelper.isNotEmpty(usuallyRegexMap)) {
             UsuallyRegexLabelClickHandler clickHandler = new UsuallyRegexLabelClickHandler();
             usuallyRegexMap.forEach((k, v) -> {
-                Label label = new Label(k);
+                Hyperlink label = new Hyperlink(k);
                 label.setUserData(v);
-                label.setOnMouseClicked(clickHandler);
+                label.setOnAction(clickHandler);
                 usuallyRegexBox.getChildren()
                         .add(label);
             });
@@ -200,14 +205,12 @@ public class RegexController {
         }
     }
 
-    private class UsuallyRegexLabelClickHandler implements EventHandler<MouseEvent> {
+    private class UsuallyRegexLabelClickHandler implements EventHandler<ActionEvent> {
 
         @Override
-        public void handle(MouseEvent event) {
-            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
-                Label l = (Label) event.getSource();
-                regexText.setText((String) l.getUserData());
-            }
+        public void handle(ActionEvent event) {
+            Label l = (Label) event.getSource();
+            regexText.setText((String) l.getUserData());
         }
     }
 

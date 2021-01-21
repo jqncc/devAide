@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jfoenix.controls.JFXDecorator;
-
 /*
- * import com.jfoenix.controls.JFXButton; import com.jfoenix.controls.JFXDecorator; import com.jfoenix.svg.SVGGlyph;
+ * import com.jfoenix.controls.JFXButton; import com.jfoenix.controls.JFXDecorator;
  */
+import com.jfoenix.svg.SVGGlyph;
+
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -194,7 +195,7 @@ public class MyDecorator extends VBox {
                 "M804.571,407.821l0,84.21401q0,17.54452 -16,29.82576t-38.857,12.28124l-694.857,0q-22.857,0 -38.857,-12.28124t-16,-29.82576l0,-84.21401q0,-17.54452 16,-29.82576t38.857,-12.28124l694.857,0q22.857,0 38.857,12.28124t16,29.82576z",
                 Color.WHITE);
         minus.setSize(10, 1);
-        minus.setTranslateY(4);
+        minus.setTranslateY(1);
         SVGGlyph resizeMax = new SVGGlyph(0, "RESIZE_MAX",
                 "M726 810v-596h-428v596h428zM726 44q34 0 59 25t25 59v768q0 34-25 60t-59 26h-428q-34 0-59-26t-25-60v-768q0-34 25-60t59-26z",
                 Color.WHITE);
@@ -211,6 +212,7 @@ public class MyDecorator extends VBox {
         // btnFull = new JFXButton();
         btnFull.getStyleClass()
                 .add("jfx-decorator-button");
+
         btnFull.setCursor(Cursor.HAND);
         btnFull.setOnAction((action) -> primaryStage.setFullScreen(!primaryStage.isFullScreen()));
         btnFull.setGraphic(full);
@@ -250,10 +252,10 @@ public class MyDecorator extends VBox {
             maximized = primaryStage.isMaximized();
             if (primaryStage.isMaximized()) {
                 btnMax.setGraphic(resizeMin);
-                btnMax.setTooltip(new Tooltip("Restore Down"));
+                btnMax.setTooltip(new Tooltip("还原"));
             } else {
                 btnMax.setGraphic(resizeMax);
-                btnMax.setTooltip(new Tooltip("Maximize"));
+                btnMax.setTooltip(new Tooltip("最大化"));
             }
         } else {
             if (!maximized) {
@@ -274,7 +276,8 @@ public class MyDecorator extends VBox {
                 primaryStage.setWidth(maximizedBox.getWidth());
                 primaryStage.setHeight(maximizedBox.getHeight());
                 btnMax.setGraphic(resizeMin);
-                btnMax.setTooltip(new Tooltip("Restore Down"));
+                btnMax.setTooltip(new Tooltip("还原"));
+                setPadding(Insets.EMPTY);
             } else {
                 // restore stage to its original size
                 primaryStage.setX(originalBox.getMinX());
@@ -283,7 +286,7 @@ public class MyDecorator extends VBox {
                 primaryStage.setHeight(originalBox.getHeight());
                 originalBox = null;
                 btnMax.setGraphic(resizeMax);
-                btnMax.setTooltip(new Tooltip("Maximize"));
+                btnMax.setTooltip(new Tooltip("最大化"));
             }
             maximized = !maximized;
         }

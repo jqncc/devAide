@@ -134,20 +134,25 @@
 
 .jfx-decorator {
    -fx-decorator-color: derive(#5264AE, -20%);
-    /*-fx-decorator-color: #fff;*/
-    -fx-background-color:#f6f6f6;
-    -fx-fill: #333;
-    -fx-text-fill:white;
+   -fx-background-color:#f6f6f6;
+   -fx-fill: #333;
+   -fx-text-fill:white;
+   /*
+    * primaryStage.initStyle(StageStyle.UNDECORATED);scene.setFill(Color.TRANSPARENT);
+    窗口边框阴影效果
+   -fx-padding:7;
+   -fx-effect: dropshadow(three-pass-box, derive(gray , -20%), 6, 0, 0, 0); 
+   -fx-background-insets: 7;*/
 }
 
 .jfx-decorator .jfx-decorator-buttons-container {
-    -fx-background-color: #333;
+    -fx-background-color: #444;
 }
 
 .jfx-decorator .resize-border {
     /*-fx-border-color: transparent;*/
-    -fx-border-color:  #333;
-    -fx-border-width: 0 2px;
+    -fx-border-color:  #444;
+    -fx-border-width: 0 1px;
 }
 /*
 边框标题居中
@@ -161,7 +166,9 @@
 .jfx-decorator-button{
 	-fx-background-color:transparent;
 }
-
+.jfx-decorator-button:hover {
+    -fx-background-color:#666;
+}
 .jfx-dialog-overlay-pane {
     -fx-background-color: rgba(0.0, 0.0, 0.0, 0.1);
 }

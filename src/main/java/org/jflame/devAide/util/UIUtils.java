@@ -2,12 +2,12 @@ package org.jflame.devAide.util;
 
 import org.controlsfx.dialog.ExceptionDialog;
 import org.jflame.devAide.AppContext;
+import org.jflame.devAide.component.MyDecorator;
 import org.jflame.devAide.component.MyIntegerSpinnerValueFactory;
 import org.jflame.devAide.component.convertor.IntFieldFormatter;
 
 import com.jfoenix.controls.JFXAlert;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDecorator;
 import com.jfoenix.controls.JFXDialogLayout;
 
 import javafx.scene.Node;
@@ -29,8 +29,9 @@ import javafx.stage.Stage;
  */
 public final class UIUtils {
 
-    public static JFXDecorator decorator(Stage stage, Parent parent, String title, String icon) {
-        JFXDecorator decorator = new JFXDecorator(stage, parent, false, true, true);
+    public static MyDecorator decorator(Stage stage, Parent parent, String title, String icon) {
+        // JFXDecorator decorator = new JFXDecorator(stage, parent, false, true, true);
+        MyDecorator decorator = new MyDecorator(stage, parent, false, true, true);
         decorator.setCustomMaximize(true);
         decorator.setTitle(title);
         if (icon != null) {

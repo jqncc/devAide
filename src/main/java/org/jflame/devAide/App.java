@@ -2,10 +2,9 @@ package org.jflame.devAide;
 
 import java.io.IOException;
 
+import org.jflame.devAide.component.MyDecorator;
 import org.jflame.devAide.util.FxUtils;
 import org.jflame.devAide.util.UIUtils;
-
-import com.jfoenix.controls.JFXDecorator;
 
 // import com.jfoenix.assets.JFoenixResources;
 import javafx.application.Application;
@@ -30,9 +29,10 @@ public class App extends Application {
         stage.setResizable(false);
         stage.setMinWidth(1024);
         stage.setMinHeight(768);
-        JFXDecorator decorator = UIUtils.decorator(stage, parent, "DevAide - 开发辅助工具", "/images/logo16X16.png");
+        MyDecorator decorator = UIUtils.decorator(stage, parent, "DevAide - 开发辅助工具", "/images/logo16X16.png");
 
         Scene scene = new Scene(decorator, 1366, 800);
+        // scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets()
                 .addAll(AppContext.getStyleFiles());
         stage.setScene(scene);

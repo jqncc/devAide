@@ -1,5 +1,11 @@
 package org.jflame.devAide.component;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.jfoenix.svg.SVGGlyphLoader;
+
 import javafx.beans.NamedArg;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -8,8 +14,8 @@ import javafx.css.CssMetaData;
 import javafx.css.SimpleStyleableDoubleProperty;
 import javafx.css.Styleable;
 import javafx.css.StyleableDoubleProperty;
-import javafx.scene.layout.Background;
 import javafx.css.converter.SizeConverter;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -19,10 +25,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Node that is used to show svg images
  *
@@ -30,6 +32,7 @@ import java.util.List;
  * @version 1.0
  * @since 2016-03-09
  */
+@Deprecated
 public class SVGGlyph extends Pane {
 
     private static final String DEFAULT_STYLE_CLASS = "jfx-svg-glyph";

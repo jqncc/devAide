@@ -117,6 +117,10 @@
 								<option>-Djava.library.path=c:\tmp</option>
 								<option>--add-opens</option>
 								<option>javafx.graphics/javafx.scene=org.controlsfx.controls</option>
+								
+								<option>--add-opens</option>
+								<option>javafx.graphics/javafx.scene=com.jfoenix</option>
+								
 								<option>--add-exports</option>
 								<option>javafx.base/com.sun.javafx.event=com.jfoenix</option>
 							</options>
@@ -132,6 +136,10 @@
 								<option>-Djava.library.path=c:\tmp</option>
 								<option>--add-opens</option>
 								<option>javafx.graphics/javafx.scene=org.controlsfx.controls</option>
+								
+								<option>--add-opens</option>
+								<option>javafx.graphics/javafx.scene=com.jfoenix</option>
+								
 								<option>--add-exports</option>
 								<option>javafx.base/com.sun.javafx.event=com.jfoenix</option>
 							</options>

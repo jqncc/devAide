@@ -26,6 +26,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONValidator;
+import com.alibaba.fastjson.JSONValidator.Type;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.jfoenix.controls.JFXDialog;
@@ -37,6 +38,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
@@ -44,6 +46,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.Clipboard;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
 /**
@@ -65,12 +68,18 @@ public class FormatToolController implements Initializable {
     private Button btnRefresh;
     @FXML
     private TextArea srcText;
+    @FXML
+    private TextArea targetText;
+    @FXML
+    private CheckBox cbxTree;
+    @FXML
+    private AnchorPane targetBox;
 
+    // @FXML
+    // private TextField searchText;
     @FXML
-    private TextField searchText;
-    @FXML
-    private TreeView<String> jsonTree;
-    private TreeItem<String> rootNode = new TreeItem<String>("ROOT");
+    private TreeView<String> treeJson;
+    private TreeItem<String> rootNode = null;
 
     final Pattern xmlPattern = Pattern.compile("^<\\s*(\\S+)(\\s[^>]*)?>[\\s\\S]*<\\s*\\/\\1\\s*>$",
             Pattern.CASE_INSENSITIVE);
@@ -90,19 +99,31 @@ public class FormatToolController implements Initializable {
                 if (isXml(srcStr)) {
                     // 作为xml处理
                     formattedStr = formatXml(srcStr);
+                    targetText.setText(formattedStr);
                 } else if (JSONValidator.from(srcStr)
                         .validate()) {
                     // 作为json处理
-                    formattedStr = formatJson(srcStr);
+                    if (cbxTree.isSelected()) {
+                        createJsonTreeView(srcStr);
+                    } else {
+                        formattedStr = formatJson(srcStr);
+                        targetText.setText(formattedStr);
+                    }
+                } else if (isCss(srcStr)) {
+                    formattedStr = formatCss(srcStr);
+                    targetText.setText(formattedStr);
                 } else {
-                    formattedStr = srcStr;
+
                 }
-                srcText.setText(formattedStr);
             } catch (Exception e) {
                 UIUtils.createExDialog("无法格式化,请确认格式是否正确", e)
                         .show();
             }
         }
+    }
+
+    private String formatCss(String srcStr) {
+        return null;
     }
 
     /**
@@ -122,7 +143,11 @@ public class FormatToolController implements Initializable {
                     .validate()) {
                 escapeStr = StringEscapeUtils.escapeJson(srcStr);
             } else {
-                escapeStr = "不可识别格式";
+                // escapeStr = "不可识别格式";
+                UIUtils.alert("提示", "不可识别格式")
+                        .show();
+                return;
+
             }
         }
         srcText.setText(escapeStr);
@@ -163,7 +188,7 @@ public class FormatToolController implements Initializable {
      * 
      * @param event
      */
-    @FXML
+    /*@FXML
     private void handleFindText(ActionEvent event) {
         String keyword = searchText.getText();
         if (StringHelper.isEmpty(keyword)) {
@@ -191,35 +216,61 @@ public class FormatToolController implements Initializable {
                 srcText.setUserData(null);
             }
         }
-    }
+    }*/
 
     /**
      * 刷新JSON树节点事件处理
      * 
      * @param event
      */
-    @FXML
+    /* @FXML
     private void handleRefreshTree(ActionEvent event) {
         String srcStr = srcText.getText();
         if (StringHelper.isNotEmpty(srcStr)) {
             srcStr = srcStr.strip();
-            if (JSONValidator.from(srcStr)
-                    .validate()) {
-                createJsonTreeView(srcStr);
-            }
+            createJsonTreeView(srcStr);
         }
-    }
+    }*/
 
+    /**
+     * 检测是否是xml文本
+     * 
+     * @param text
+     * @return
+     */
     private boolean isXml(String text) {
         return xmlPattern.matcher(text)
                 .matches();
     }
 
+    /**
+     * 检测是否是css文本
+     * 
+     * @param text
+     * @return
+     */
+    private boolean isCss(String text) {
+        return false;
+    }
+
+    /**
+     * 格式化json
+     * 
+     * @param text
+     * @return
+     */
     private String formatJson(String text) {
         return JSON.toJSONString(
                 JSON.parse(text, Feature.AllowComment, Feature.AllowSingleQuotes, Feature.AutoCloseSource), true);
     }
 
+    /**
+     * 格式化xml
+     * 
+     * @param text
+     * @return
+     * @throws Exception
+     */
     private String formatXml(String text) throws Exception {
         text = text.replaceAll(">(\\s*|\n|\t|\r)<", "><");
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -237,23 +288,37 @@ public class FormatToolController implements Initializable {
         return out.toString();
     }
 
+    /**
+     * 创建json treeview
+     * 
+     * @param jsonText
+     */
     private void createJsonTreeView(String jsonText) {
-        if (jsonTree.getRoot() != null) {
-            jsonTree.setRoot(rootNode);
+        JSONValidator validator = JSONValidator.from(jsonText);
+        if (!validator.validate()) {
+            return;
         }
-        rootNode.getChildren()
-                .clear();
-        if (JSON.isValidArray(jsonText)) {
+        showTreeViewBox();
+        if (rootNode == null) {
+            rootNode = new TreeItem<String>("ROOT");
+            treeJson.setRoot(rootNode);
+        } else {
+            rootNode.getChildren()
+                    .clear();
+        }
+        if (validator.getType() == Type.Array) {
             JSONArray root = JSON.parseArray(jsonText);
-            createChildNode(root, rootNode);
+            createJsonTreeNode(root, rootNode);
         } else {
             JSONObject root = JSON.parseObject(jsonText);
-            createChildNode(root, rootNode);
+            createJsonTreeNode(root, rootNode);
         }
-        jsonTree.refresh();
+
+        // jsonTree.refresh();
+
     }
 
-    static void createChildNode(JSON jnode, TreeItem<String> parent) {
+    static void createJsonTreeNode(JSON jnode, TreeItem<String> parent) {
         String nodeName;
         TreeItem<String> curItem;
         if (jnode instanceof JSONArray) {
@@ -269,7 +334,7 @@ public class FormatToolController implements Initializable {
                             .add(curItem);
                     // System.out.println(nodeName);
                     if (!((JSONObject) node).isEmpty()) {
-                        createChildNode((JSONObject) node, curItem);
+                        createJsonTreeNode((JSONObject) node, curItem);
                     }
                 } else if (node instanceof JSONArray) {
                     nodeName = nodeName + "[Array]";
@@ -278,17 +343,16 @@ public class FormatToolController implements Initializable {
                             .add(curItem);
                     // System.out.println(nodeName);
                     if (!((JSONArray) node).isEmpty()) {
-                        createChildNode((JSONArray) node, curItem);
+                        createJsonTreeNode((JSONArray) node, curItem);
                     }
                 } else {
                     nodeName = nodeName + node;
                     curItem = new TreeItem<String>(nodeName);
                     parent.getChildren()
                             .add(curItem);
-                    // System.out.println(nodeName);
                 }
             }
-        } else if (jnode instanceof JSONArray) {
+        } else if (jnode instanceof JSONObject) {
             JSONObject root = (JSONObject) jnode;
             for (Map.Entry<String,Object> kv : root.entrySet()) {
                 nodeName = kv.getKey() + ":";
@@ -299,7 +363,7 @@ public class FormatToolController implements Initializable {
                             .add(curItem);
                     // System.out.println(nodeName);
                     if (!((JSONObject) kv.getValue()).isEmpty()) {
-                        createChildNode((JSONObject) kv.getValue(), curItem);
+                        createJsonTreeNode((JSONObject) kv.getValue(), curItem);
                     }
                 } else if (kv.getValue() instanceof JSONArray) {
                     nodeName = nodeName + "[Array]";
@@ -308,7 +372,7 @@ public class FormatToolController implements Initializable {
                             .add(curItem);
                     // System.out.println(nodeName);
                     if (!((JSONArray) kv.getValue()).isEmpty()) {
-                        createChildNode((JSONArray) kv.getValue(), curItem);
+                        createJsonTreeNode((JSONArray) kv.getValue(), curItem);
                     }
                 } else {
                     nodeName = nodeName + kv.getValue();
@@ -360,9 +424,18 @@ public class FormatToolController implements Initializable {
         srcText.setContextMenu(textAreaMenu);
     }
 
+    private void showTreeViewBox() {
+        treeJson.setVisible(true);
+        treeJson.setManaged(true);
+
+        targetBox.setVisible(false);
+        targetBox.setManaged(false);
+    }
+
     // controller类实例化后执行方法,1.Initializable接口,2.定义个@FXML private void initialize(方法签名不能修改)
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         createMenuItem();
         srcText.textProperty()
                 .addListener(new ChangeListener<String>() {

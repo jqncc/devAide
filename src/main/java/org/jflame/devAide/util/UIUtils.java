@@ -132,7 +132,7 @@ public final class UIUtils {
         JFXButton closeButton = new JFXButton("确定");
         closeButton.getStyleClass()
                 .add("dialog-accept");
-        closeButton.setOnAction(event -> alert.close());
+        closeButton.setOnAction(event -> alert.hideWithAnimation());
         layout.setActions(closeButton);
         alert.setContent(layout);
         return alert;

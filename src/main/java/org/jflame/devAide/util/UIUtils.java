@@ -121,13 +121,17 @@ public final class UIUtils {
         alert("错误", errorMsg).showAndWait();
     }
 
+    public static void infoAlert(String infoMsg) {
+        alert(null, infoMsg).show();
+    }
+
     public static JFXAlert<Void> alert(String title, String message) {
         JFXAlert<Void> alert = new JFXAlert<>(AppContext.getInstance()
                 .mainStage());
         alert.initModality(Modality.WINDOW_MODAL);
         alert.setOverlayClose(false);
         JFXDialogLayout layout = new JFXDialogLayout();
-        layout.setHeading(new Label("提示"));
+        layout.setHeading(new Label(title != null ? title : "提示"));
         layout.setBody(new Label(message));
         JFXButton closeButton = new JFXButton("确定");
         closeButton.getStyleClass()

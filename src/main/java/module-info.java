@@ -30,9 +30,14 @@ module devAide {
     opens org.jflame.devAide.component to javafx.fxml;
 
     uses org.jflame.devAide.plugin.ToolPlugin;
+    uses org.jflame.devAide.util.format.CodeFormatter;
 
     provides org.jflame.devAide.plugin.ToolPlugin
             with org.jflame.devAide.plugin.BarcodeTool, org.jflame.devAide.plugin.CronTool,
             org.jflame.devAide.plugin.FormatTool, org.jflame.devAide.plugin.RegexTool;
+
+    provides org.jflame.devAide.util.format.CodeFormatter
+            with org.jflame.devAide.util.format.CssFormatter, org.jflame.devAide.util.format.JsonFormatter,
+            org.jflame.devAide.util.format.SQLFormatter, org.jflame.devAide.util.format.XmlFormatter;
 
 }

@@ -1,38 +1,21 @@
 package org.jflame.devAide.controller;
 
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.jflame.commons.util.StringHelper;
 import org.jflame.devAide.util.UIUtils;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
+import org.jflame.devAide.util.format.CodeFormatter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONValidator;
 import com.alibaba.fastjson.JSONValidator.Type;
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.jfoenix.controls.JFXDialog;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -59,13 +42,8 @@ public class FormatToolController implements Initializable {
     @FXML
     private Button btnJsonFmt;
     @FXML
-    private Button btnEscape;
-    @FXML
-    private Button btnCompressAndEscape;
-    @FXML
     private Button btnSearch;
-    @FXML
-    private Button btnRefresh;
+
     @FXML
     private TextArea srcText;
     @FXML
@@ -96,25 +74,8 @@ public class FormatToolController implements Initializable {
         if (StringHelper.isNotEmpty(srcStr)) {
             srcStr = srcStr.strip();
             try {
-                if (isXml(srcStr)) {
-                    // 作为xml处理
-                    formattedStr = formatXml(srcStr);
-                    targetText.setText(formattedStr);
-                } else if (JSONValidator.from(srcStr)
-                        .validate()) {
-                    // 作为json处理
-                    if (cbxTree.isSelected()) {
-                        createJsonTreeView(srcStr);
-                    } else {
-                        formattedStr = formatJson(srcStr);
-                        targetText.setText(formattedStr);
-                    }
-                } else if (isCss(srcStr)) {
-                    formattedStr = formatCss(srcStr);
-                    targetText.setText(formattedStr);
-                } else {
-
-                }
+                formattedStr = CodeFormatter.format(srcStr);
+                targetText.setText(formattedStr);
             } catch (Exception e) {
                 UIUtils.createExDialog("无法格式化,请确认格式是否正确", e)
                         .show();
@@ -122,44 +83,12 @@ public class FormatToolController implements Initializable {
         }
     }
 
-    private String formatCss(String srcStr) {
-        return null;
-    }
-
-    /**
-     * 转义事件处理
-     * 
-     * @param event
-     */
-    @FXML
-    private void handleEscape(ActionEvent event) {
-        String srcStr = srcText.getText();
-        String escapeStr = null;
-        if (StringHelper.isNotEmpty(srcStr)) {
-            srcStr = srcStr.strip();
-            if (isXml(srcStr)) {
-                escapeStr = StringEscapeUtils.escapeXml10(srcStr);
-            } else if (JSONValidator.from(srcStr)
-                    .validate()) {
-                escapeStr = StringEscapeUtils.escapeJson(srcStr);
-            } else {
-                // escapeStr = "不可识别格式";
-                UIUtils.alert("提示", "不可识别格式")
-                        .show();
-                return;
-
-            }
-        }
-        srcText.setText(escapeStr);
-
-    }
-
     /**
      * 压缩并转意事件处理
      * 
      * @param event
      */
-    @FXML
+    /* @FXML
     private void handleCompressAndEscape(ActionEvent event) {
         String srcStr = srcText.getText();
         String escapeStr = null;
@@ -179,7 +108,7 @@ public class FormatToolController implements Initializable {
             }
         }
         srcText.setText(escapeStr);
-    }
+    }*/
 
     String lastKeyword;
 
@@ -231,62 +160,6 @@ public class FormatToolController implements Initializable {
             createJsonTreeView(srcStr);
         }
     }*/
-
-    /**
-     * 检测是否是xml文本
-     * 
-     * @param text
-     * @return
-     */
-    private boolean isXml(String text) {
-        return xmlPattern.matcher(text)
-                .matches();
-    }
-
-    /**
-     * 检测是否是css文本
-     * 
-     * @param text
-     * @return
-     */
-    private boolean isCss(String text) {
-        return false;
-    }
-
-    /**
-     * 格式化json
-     * 
-     * @param text
-     * @return
-     */
-    private String formatJson(String text) {
-        return JSON.toJSONString(
-                JSON.parse(text, Feature.AllowComment, Feature.AllowSingleQuotes, Feature.AutoCloseSource), true);
-    }
-
-    /**
-     * 格式化xml
-     * 
-     * @param text
-     * @return
-     * @throws Exception
-     */
-    private String formatXml(String text) throws Exception {
-        text = text.replaceAll(">(\\s*|\n|\t|\r)<", "><");
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        InputSource is = new InputSource(new StringReader(text));
-        Document xmlDoc = db.parse(is);
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer tf = factory.newTransformer();
-        // 输出内容是否使用换行
-        tf.setOutputProperty(OutputKeys.INDENT, "yes");
-        tf.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
-
-        StringWriter out = new StringWriter();
-        tf.transform(new DOMSource(xmlDoc), new StreamResult(out));
-        return out.toString();
-    }
 
     /**
      * 创建json treeview
@@ -437,9 +310,9 @@ public class FormatToolController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         createMenuItem();
-        srcText.textProperty()
+        /* srcText.textProperty()
                 .addListener(new ChangeListener<String>() {
-
+        
                     @Override
                     public void changed(ObservableValue<? extends String> observable, String oldValue,
                             String newValue) {
@@ -447,7 +320,7 @@ public class FormatToolController implements Initializable {
                         lastKeyword = null;
                         srcText.setUserData(null);
                     }
-                });
+                });*/
         /*validationSupport.setValidationDecorator(new MyGraphicValidationDecoration());
         validationSupport.registerValidator(srcText, false, new Validator<String>() {
         

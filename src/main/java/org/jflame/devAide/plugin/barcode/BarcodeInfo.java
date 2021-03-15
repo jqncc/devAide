@@ -1,4 +1,4 @@
-package org.jflame.devAide.model;
+package org.jflame.devAide.plugin.barcode;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

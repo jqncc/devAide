@@ -26,7 +26,7 @@
 
 <GridPane alignment="TOP_CENTER" hgap="5.0" maxWidth="1.7976931348623157E308" maxHeight="1.7976931348623157E308"
 	minWidth="-Infinity" prefHeight="630.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/11.0.1"
-	xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.QrcodeController">
+	xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.plugin.barcode.QrcodeController">
 	<columnConstraints>
 		<ColumnConstraints hgrow="SOMETIMES" percentWidth="36.0" />
 		<ColumnConstraints hgrow="SOMETIMES" percentWidth="32.0" />
@@ -44,21 +44,21 @@
 				<Insets bottom="20.0" left="15.0" right="15.0" top="10.0" />
 			</padding>
 			<children>
-				<Label layoutX="21.0" layoutY="14.0" text="条码内容" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0" />
+				<Label layoutX="21.0" layoutY="14.0" text="%bc.content" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0" />
 				<Separator layoutX="20.0" layoutY="33.0" maxWidth="1.7976931348623157E308" prefHeight="0.0"
 					prefWidth="265.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
-				<Hyperlink fx:id="lblParser" id="lblbarcodeParser" layoutX="262.0" layoutY="10.0" text="解码"
+				<Hyperlink fx:id="lblParser" id="lblbarcodeParser" layoutX="262.0" layoutY="10.0" text="%bc.decode"
 					AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0" onAction="#handleParseBarcode" />
 				<TextArea fx:id="barcodeText" layoutX="50.0" layoutY="66.0" prefHeight="195.0" prefWidth="278.0"
-					promptText="请输入条码内容" wrapText="true" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
+					promptText="%bc.prompt" wrapText="true" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
 					AnchorPane.topAnchor="46.0" />
 				<Button fx:id="btnCreate" id="btnCreate" layoutX="249.0" layoutY="546.0" mnemonicParsing="false"
-					onAction="#handleCreateBarcode" styleClass="flatBtn,btn-info" text="生成条码" textAlignment="CENTER"
+					onAction="#handleCreateBarcode" styleClass="flatBtn,btn-info" text="%bc.create" textAlignment="CENTER"
 					AnchorPane.rightAnchor="10.0" />
 				<TabPane layoutX="50.0" layoutY="276.0" prefHeight="254.0" prefWidth="278.0" tabClosingPolicy="UNAVAILABLE"
 					tabMinWidth="50.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="256.0">
 					<tabs>
-						<Tab closable="false" text="属性">
+						<Tab closable="false" text="%bc.attri">
 							<content>
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="280.0" prefWidth="200.0">
 									<children>
@@ -76,11 +76,11 @@
 												<RowConstraints minHeight="32.0" prefHeight="30.0" />
 											</rowConstraints>
 											<children>
-												<Label text="条码类型" />
-												<Label text="容错等级" GridPane.rowIndex="1" />
-												<Label id="lblBarcodeSize" text="尺寸(px)" GridPane.rowIndex="2" />
-												<Label text="背景色" GridPane.rowIndex="3" />
-												<Label text="前景色" GridPane.rowIndex="4" />
+												<Label text="%bc.type" />
+												<Label text="%bc.fault.tolerant" GridPane.rowIndex="1" />
+												<Label id="lblBarcodeSize" text="%bc.size" GridPane.rowIndex="2" />
+												<Label text="%pub.bgcolor" GridPane.rowIndex="3" />
+												<Label text="%pub.fgcolor" GridPane.rowIndex="4" />
 												<ComboBox fx:id="cbxBarcodeType" prefWidth="180.0" GridPane.columnIndex="1" />
 												<ComboBox fx:id="cbxFault" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 												<Spinner fx:id="spnBarcodeSize" editable="true" prefWidth="180.0" GridPane.columnIndex="1"
@@ -112,12 +112,12 @@
 											</rowConstraints>
 											<children>
 												<!-- <TextField GridPane.columnIndex="1" /> -->
-												<FileField fx:id="logoField" prefWidth="180.0" text="选择" GridPane.columnIndex="1" />
+												<FileField fx:id="logoField" prefWidth="180.0" text="%choose" GridPane.columnIndex="1" />
 												<Spinner fx:id="spnLogoSize" editable="true" prefWidth="170.0" GridPane.columnIndex="1"
 													GridPane.rowIndex="1" />
-												<Label text="文件" />
-												<Label text="尺寸(px)" GridPane.rowIndex="1" />
-												<CheckBox fx:id="chbxLogoBorder" mnemonicParsing="false" text="增加边框" GridPane.columnIndex="1"
+												<Label text="%pub.file" />
+												<Label text="%bc.size" GridPane.rowIndex="1" />
+												<CheckBox fx:id="chbxLogoBorder" mnemonicParsing="false" text="%bc.addborder" GridPane.columnIndex="1"
 													GridPane.rowIndex="2" />
 											</children>
 										</GridPane>
@@ -131,7 +131,7 @@
 		</AnchorPane>
 		<AnchorPane prefWidth="330.0" GridPane.columnIndex="1" GridPane.valignment="TOP">
 			<children>
-				<Label layoutX="14.0" layoutY="14.0" text="生成条码" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0" />
+				<Label layoutX="14.0" layoutY="14.0" text="%bc.create" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0" />
 				<Separator layoutX="14.0" layoutY="28.0" prefHeight="3.0" prefWidth="287.0" AnchorPane.leftAnchor="0.0"
 					AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
 				<StackPane fx:id="barcodeBox" layoutX="55.0" layoutY="83.0" minHeight="254.0" minWidth="254.0"
@@ -139,15 +139,15 @@
 					AnchorPane.topAnchor="46.0">
 					<children>
 						<ImageView fx:id="codeImageViwer" pickOnBounds="true" preserveRatio="true" />
-						<Label fx:id="lblNoCodeImageMsg" style="-fx-text-fill:#ccc;-fx-font-size:20px" text="暂无生成" />
+						<Label fx:id="lblNoCodeImageMsg" style="-fx-text-fill:#ccc;-fx-font-size:20px" text="%bc.nocreate" />
 					</children>
 				</StackPane>
 				<HBox alignment="CENTER" layoutX="50.0" layoutY="272.0" prefHeight="40.0" prefWidth="251.0"
 					AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="306.0" spacing="10.0">
 					<children>
 						<Button fx:id="btnOpenBarcode" mnemonicParsing="false" onAction="#handleOpenBarcodeInExplorer"
-							text="打开条码" styleClass="flatBtn,btn-success" />
-						<Button mnemonicParsing="false" onAction="#handleOpenBarcodeDir" text="打开目录"
+							text="%bc.open" styleClass="flatBtn,btn-success" />
+						<Button mnemonicParsing="false" onAction="#handleOpenBarcodeDir" text="%bc.opendir"
 							styleClass="flatBtn,btn-info" />
 					</children>
 				</HBox>
@@ -158,7 +158,7 @@
 		</AnchorPane>
 		<AnchorPane prefWidth="266" maxHeight="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.valignment="TOP">
 			<children>
-				<Label layoutX="14.0" layoutY="14.0" text="最近生成" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0" />
+				<Label layoutX="14.0" layoutY="14.0" text="%bc.last.create" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0" />
 				<Separator layoutX="14.0" layoutY="28.0" prefHeight="3.0" prefWidth="287.0" AnchorPane.leftAnchor="0.0"
 					AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
 				<ListView fx:id="historyView" id="barcodeRecordView" maxWidth="1.7976931348623157E308" prefHeight="540.0"

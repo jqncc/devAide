@@ -1,4 +1,4 @@
-package org.jflame.devAide.controller;
+package org.jflame.devAide.plugin.barcode;
 
 import java.awt.BasicStroke;
 import java.awt.Desktop;
@@ -33,11 +33,11 @@ import org.jflame.commons.util.DateHelper;
 import org.jflame.commons.util.NumberHelper;
 import org.jflame.commons.util.StringHelper;
 import org.jflame.commons.valid.ValidatorHelper;
-import org.jflame.devAide.AppContext;
+import org.jflame.devAide.App;
+import org.jflame.devAide.AppSetting;
 import org.jflame.devAide.component.FileField;
 import org.jflame.devAide.component.MyGraphicValidationDecoration;
 import org.jflame.devAide.component.convertor.NVPairConverter;
-import org.jflame.devAide.model.BarcodeInfo;
 import org.jflame.devAide.util.UIUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,8 +141,7 @@ public class QrcodeController {
     private ObservableList<BarcodeInfo> barcodeRecords = FXCollections.observableArrayList();
 
     public QrcodeController() {
-        qrcodeCacheDir = Paths.get(AppContext.getInstance()
-                .projDataDir(), "barcode");
+        qrcodeCacheDir = Paths.get(AppSetting.projDataDir(), "barcode");
         recordPath = Paths.get(qrcodeCacheDir.toString(), "record.json");
 
         ecLevels = NameValuePair.newPairs()

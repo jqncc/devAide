@@ -25,16 +25,17 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Parent parent = FxUtils.loadFXML("main");
+
         stage.setResizable(false);
         stage.setMinWidth(1024);
         stage.setMinHeight(768);
-        MyDecorator decorator = UIUtils.decorator(stage, parent, "DevAide - 开发辅助工具", "/images/logo16X16.png");
+        Parent parent = FxUtils.loadFXML("main");
+        MyDecorator decorator = UIUtils.decorator(stage, parent, AppSetting.getAppTitle(), "/images/logo16X16.png");
 
         Scene scene = new Scene(decorator, 1366, 800);
         // scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets()
-                .addAll(AppContext.getStyleFiles());
+                .addAll(AppSetting.getStyleFiles());
         stage.setScene(scene);
         stage.setResizable(true);
         stage.setTitle("DevAide");

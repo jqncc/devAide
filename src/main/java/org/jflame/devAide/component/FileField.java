@@ -39,7 +39,7 @@ public class FileField extends StackPane implements Initializable {
 
     public FileField() {
         getStyleClass().add("file-field");
-        FxUtils.loadFXML("fileField", this, this);
+        FxUtils.loadFXML("fileField", this, this, null);
     }
 
     @FXML

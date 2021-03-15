@@ -1,10 +1,15 @@
-package org.jflame.devAide.util.format;
+package org.jflame.devAide.plugin.codeFormatter;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * css格式化工具类
+ * 
+ * @author charles.zhang
+ */
 public class CssFormatter implements CodeFormatter {
 
     public final static Pattern cssPattern = Pattern.compile(

@@ -1,4 +1,4 @@
-package org.jflame.devAide.controller;
+package org.jflame.devAide.plugin.cron;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;

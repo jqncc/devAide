@@ -1,10 +1,13 @@
-package org.jflame.devAide.plugin;
+package org.jflame.devAide.plugin.regex;
+
+import org.jflame.devAide.AppSetting;
+import org.jflame.devAide.plugin.ToolPlugin;
 
 public class RegexTool implements ToolPlugin {
 
     @Override
     public String getName() {
-        return "正则表达式";
+        return AppSetting.getString("plugin.regex.name");
     }
 
     @Override

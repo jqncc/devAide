@@ -1,14 +1,8 @@
 package org.jflame.devAide;
 
-import java.util.Map;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-
 public final class Globals {
 
-    static void child(JSON jnode) {
+    /*static void child(JSON jnode) {
         String nodeName = "";
         if (jnode instanceof JSONArray) {
             JSONArray root = (JSONArray) jnode;
@@ -16,7 +10,7 @@ public final class Globals {
             for (int i = 0; i < size; i++) {
                 Object node = root.get(i);
                 nodeName = "[" + i + "]:";
-
+    
                 if (node instanceof JSONObject) {
                     nodeName = nodeName + "[Object]";
                     System.out.println(nodeName);
@@ -33,7 +27,7 @@ public final class Globals {
                     nodeName = nodeName + node;
                     System.out.println(nodeName);
                 }
-
+    
             }
         } else {
             JSONObject root = (JSONObject) jnode;
@@ -57,5 +51,5 @@ public final class Globals {
                 }
             }
         }
-    }
+    }*/
 }

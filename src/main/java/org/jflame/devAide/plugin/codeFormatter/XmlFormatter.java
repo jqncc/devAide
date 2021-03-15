@@ -1,4 +1,4 @@
-package org.jflame.devAide.util.format;
+package org.jflame.devAide.plugin.codeFormatter;
 
 import java.io.IOException;
 import java.io.StringReader;

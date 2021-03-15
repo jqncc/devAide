@@ -24,7 +24,7 @@ public class ResourceUtils {
             return ResourceUtils.class.getResource(relativePath)
                     .toExternalForm();
         } catch (NullPointerException e) {
-            throw new BusinessException(relativePath + "不存在 ");
+            throw new BusinessException(relativePath + "不存在");
         }
 
     }

@@ -6,6 +6,7 @@ import java.util.ServiceLoader;
 
 import org.controlsfx.control.StatusBar;
 import org.jflame.devAide.AppContext;
+import org.jflame.devAide.AppSetting;
 import org.jflame.devAide.plugin.ToolPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -202,7 +203,7 @@ public class MainController {
                 if (item.getIcon() != null) {
                     setGraphic(item.icon(14));
                 } else {
-                    setGraphic(AppContext.FONT_AWESOME.create("WRENCH"));
+                    setGraphic(AppSetting.FONT_AWESOME.create("WRENCH"));
                 }
             }
 

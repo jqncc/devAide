@@ -1,4 +1,4 @@
-package org.jflame.devAide.controller;
+package org.jflame.devAide.plugin.regex;
 
 import java.util.Map;
 import java.util.regex.Matcher;

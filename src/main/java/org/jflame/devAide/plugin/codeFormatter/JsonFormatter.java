@@ -1,4 +1,4 @@
-package org.jflame.devAide.util.format;
+package org.jflame.devAide.plugin.codeFormatter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONValidator;

@@ -1,4 +1,4 @@
-package org.jflame.devAide.util.format;
+package org.jflame.devAide.plugin.codeFormatter;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;

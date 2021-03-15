@@ -1,7 +1,7 @@
 package org.jflame.devAide.plugin;
 
 import org.jflame.commons.util.StringHelper;
-import org.jflame.devAide.AppContext;
+import org.jflame.devAide.AppSetting;
 import org.jflame.devAide.util.FxUtils;
 
 import javafx.scene.Node;
@@ -69,7 +69,7 @@ public interface ToolPlugin extends Comparable<ToolPlugin> {
     default public Node icon(double size) {
         // @开头为内置FontAwesome字体图标
         if (getIcon().charAt(0) == '@') {
-            return AppContext.FONT_AWESOME.create(getIcon().substring(1))
+            return AppSetting.FONT_AWESOME.create(getIcon().substring(1))
                     .size(size);
         } else {
             ImageView imageView = new ImageView(getIcon());
@@ -85,6 +85,8 @@ public interface ToolPlugin extends Comparable<ToolPlugin> {
             return 1;
         else if (this.getOrder() < o.getOrder())
             return -1;
-        return 0;
+        else
+            return this.getName()
+                    .compareTo(o.getName());
     }
 }

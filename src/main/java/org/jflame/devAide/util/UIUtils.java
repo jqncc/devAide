@@ -2,6 +2,7 @@ package org.jflame.devAide.util;
 
 import org.controlsfx.dialog.ExceptionDialog;
 import org.jflame.devAide.AppContext;
+import org.jflame.devAide.AppSetting;
 import org.jflame.devAide.component.MyDecorator;
 import org.jflame.devAide.component.MyIntegerSpinnerValueFactory;
 import org.jflame.devAide.component.convertor.IntFieldFormatter;
@@ -79,7 +80,7 @@ public final class UIUtils {
         // 对话框的Scene是独立的,样式没有共用主界面,所以需要单独引用
         dlg.getDialogPane()
                 .getStylesheets()
-                .addAll(AppContext.getStyleFiles());
+                .addAll(AppSetting.getStyleFiles());
         return dlg;
     }
 

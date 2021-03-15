@@ -2,8 +2,8 @@ package devAide;
 
 import java.util.regex.Pattern;
 
-import org.jflame.devAide.util.format.CssFormatter;
-import org.jflame.devAide.util.format.SQLFormatter;
+import org.jflame.devAide.plugin.codeFormatter.CssFormatter;
+import org.jflame.devAide.plugin.codeFormatter.SQLFormatter;
 import org.junit.Test;
 
 public class FormatTest {

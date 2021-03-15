@@ -1,10 +1,13 @@
-package org.jflame.devAide.plugin;
+package org.jflame.devAide.plugin.barcode;
+
+import org.jflame.devAide.AppSetting;
+import org.jflame.devAide.plugin.ToolPlugin;
 
 public class BarcodeTool implements ToolPlugin {
 
     @Override
     public String getName() {
-        return "条码生成器";
+        return AppSetting.getString("plugin.bc.name");
     }
 
     @Override

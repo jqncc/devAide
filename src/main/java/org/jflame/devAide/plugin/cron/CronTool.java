@@ -1,10 +1,13 @@
-package org.jflame.devAide.plugin;
+package org.jflame.devAide.plugin.cron;
+
+import org.jflame.devAide.AppSetting;
+import org.jflame.devAide.plugin.ToolPlugin;
 
 public class CronTool implements ToolPlugin {
 
     @Override
     public String getName() {
-        return "CRON表达式";
+        return AppSetting.getString("plugin.cron.name");
     }
 
     @Override

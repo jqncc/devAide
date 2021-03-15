@@ -1,4 +1,4 @@
-package org.jflame.devAide.controller;
+package org.jflame.devAide.plugin.codeFormatter;
 
 import java.net.URL;
 import java.util.Map;
@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import org.jflame.commons.util.StringHelper;
 import org.jflame.devAide.util.UIUtils;
-import org.jflame.devAide.util.format.CodeFormatter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;

@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.jflame.devAide.component.CheckBoxFlowPane?>
 
-<SplitPane id="regexSplitPane" dividerPositions="0.6590296495956873" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600" minWidth="800" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.controller.CronController">
+<SplitPane id="regexSplitPane" dividerPositions="0.6590296495956873" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600" minWidth="800" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.plugin.cron.CronController">
   <items>
     <AnchorPane minHeight="580.0" minWidth="480.0" prefHeight="580.0" prefWidth="480.0">
          <children>

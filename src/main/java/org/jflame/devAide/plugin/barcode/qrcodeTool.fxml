@@ -112,7 +112,7 @@
 											</rowConstraints>
 											<children>
 												<!-- <TextField GridPane.columnIndex="1" /> -->
-												<FileField fx:id="logoField" prefWidth="180.0" text="%choose" GridPane.columnIndex="1" />
+												<FileField fx:id="logoField" prefWidth="180.0" text="%pub.choose" GridPane.columnIndex="1" />
 												<Spinner fx:id="spnLogoSize" editable="true" prefWidth="170.0" GridPane.columnIndex="1"
 													GridPane.rowIndex="1" />
 												<Label text="%pub.file" />

@@ -63,6 +63,9 @@ public class FxUtils {
      * @return 返回生成的Parent
      */
     public static Parent loadFXML(String fxml, Node root, Object controller, ResourceBundle resourceBundle) {
+        System.out.println(App.class.getResource(fxml + ".fxml"));
+        System.out.println(App.class.getResource("/"));
+        System.out.println(App.class.getResource("org/jflame/devAide/plugin/barcode/qrcodeTool.fxml"));
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
             fxmlLoader.setResources(resourceBundle == null ? AppSetting.getResourceBundle() : resourceBundle);
@@ -73,7 +76,7 @@ public class FxUtils {
                 fxmlLoader.setController(controller);
             }
             return fxmlLoader.load();
-        } catch (IOException e) {
+        } catch (IllegalStateException | IOException e) {
             UIUtils.createExDialog(AppSetting.getString("ex.loadfxml", fxml), e)
                     .show();
             logger.error("加载fxml异常" + fxml, e);

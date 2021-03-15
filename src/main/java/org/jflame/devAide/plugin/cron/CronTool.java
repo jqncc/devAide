@@ -12,7 +12,7 @@ public class CronTool implements ToolPlugin {
 
     @Override
     public String getFxml() {
-        return "cronTool";
+        return "/org/jflame/devAide/plugin/cron/cronTool";
     }
 
     @Override

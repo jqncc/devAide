@@ -1,5 +1,6 @@
 package org.jflame.devAide;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -39,17 +40,34 @@ public final class AppSetting {
     private static final Set<String> styleFiles;
 
     static {
-        try {
-            PROJ_ROOT_DIR = Paths.get(Thread.currentThread()
-                    .getContextClassLoader()
-                    .getResource("")
-                    .toURI())
-                    .toString();
-            PROJ_DATA_DIR = Paths.get(PROJ_ROOT_DIR, "data")
-                    .toString();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+        String baseDir = System.getProperty("baseDir");
+        if (baseDir == null) {
+            try {
+                File root;
+                String runningJarPath = App.class.getProtectionDomain()
+                        .getCodeSource()
+                        .getLocation()
+                        .toURI()
+                        .getPath()
+                        .replaceAll("\\\\", "/");// 获取jar包所有目录
+                int lastIndexOf = runningJarPath.lastIndexOf("/target/");
+                System.out.println("====" + runningJarPath);
+                if (lastIndexOf < 0) {
+                    root = new File("");
+                } else {
+                    root = new File(runningJarPath.substring(0, lastIndexOf));
+                }
+                System.out.println("application resolved root folder: " + root.getAbsolutePath());
+                baseDir = root.getAbsolutePath();
+            } catch (URISyntaxException ex) {
+                throw new RuntimeException(ex);
+            }
         }
+
+        PROJ_ROOT_DIR = baseDir;
+        PROJ_DATA_DIR = Paths.get(baseDir, "data")
+                .toString();
+
         // i18n = AppSetting.getResourceBundle();
         styleFiles = CollectionHelper.newSet(BASE_CSS_FILES);
     }
@@ -59,18 +77,18 @@ public final class AppSetting {
     }
 
     public static ResourceBundle getResourceBundle() {
-        if (i18n != null) {
+        if (i18n == null) {
             i18n = ResourceBundle.getBundle(BUNDLE_NAME);
         }
         return i18n;
     }
 
     public static String getString(String key) {
-        return i18n.getString(key);
+        return getResourceBundle().getString(key);
     }
 
     public static String getString(String key, Object... args) {
-        String fmt = i18n.getString(key);
+        String fmt = getString(key);
         if (fmt != null) {
             return MessageFormat.format(fmt, args);
         } else {

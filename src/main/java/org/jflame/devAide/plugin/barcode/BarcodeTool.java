@@ -12,7 +12,7 @@ public class BarcodeTool implements ToolPlugin {
 
     @Override
     public String getFxml() {
-        return "qrcodeTool";
+        return "/org/jflame/devAide/plugin/barcode/qrcodeTool";
     }
 
     @Override

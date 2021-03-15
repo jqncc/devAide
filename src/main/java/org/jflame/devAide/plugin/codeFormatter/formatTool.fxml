@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<GridPane stylesheets="@formatTool.css" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" stylesheets="@/org/jflame/devAide/plugin/css/formatTool.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.plugin.codeFormatter.FormatToolController">
+<GridPane stylesheets="@../org/jflame/devAide/plugin/codeFormatter/formatTool.css" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jflame.devAide.plugin.codeFormatter.FormatToolController">
 
 	<columnConstraints>
 		<ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="280.0" percentWidth="42.0" prefWidth="285.0" />

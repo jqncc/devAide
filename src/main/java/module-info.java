@@ -20,9 +20,24 @@ module devAide {
 
     exports org.jflame.devAide.component;
     exports org.jflame.devAide.model;
-    exports org.jflame.devAide.plugin;
     exports org.jflame.devAide.util;
+    exports org.jflame.devAide.plugin;
 
+    exports org.jflame.devAide.plugin.barcode;
+    exports org.jflame.devAide.plugin.codeFormatter;
+    exports org.jflame.devAide.plugin.cron;
+    exports org.jflame.devAide.plugin.regex;
+
+    opens org.jflame.devAide.plugin.barcode;
+    opens org.jflame.devAide.plugin.codeFormatter;
+    opens org.jflame.devAide.plugin.cron;
+    opens org.jflame.devAide.plugin.regex;
+
+    /*exports org.jflame.devAide.plugin.barcode to javafx.graphics, javafx.fxml;
+    exports org.jflame.devAide.plugin.codeFormatter to javafx.graphics, javafx.fxml;
+    exports org.jflame.devAide.plugin.cron to javafx.graphics, javafx.fxml;
+    exports org.jflame.devAide.plugin.regex to javafx.graphics, javafx.fxml;
+    */
     exports org.jflame.devAide to javafx.graphics;
     exports org.jflame.devAide.controller to javafx.graphics, javafx.fxml;
 

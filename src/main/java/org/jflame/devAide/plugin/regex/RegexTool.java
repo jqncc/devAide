@@ -12,7 +12,7 @@ public class RegexTool implements ToolPlugin {
 
     @Override
     public String getFxml() {
-        return "regexTester";
+        return "/org/jflame/devAide/plugin/regex/regexTester";
     }
 
     @Override

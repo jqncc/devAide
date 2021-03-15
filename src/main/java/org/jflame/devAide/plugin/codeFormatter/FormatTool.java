@@ -12,7 +12,7 @@ public class FormatTool implements ToolPlugin {
 
     @Override
     public String getFxml() {
-        return "org/jflame/devAide/plugin/codeFormatter/formatTool";
+        return "/org/jflame/devAide/plugin/codeFormatter/formatTool";
     }
 
     @Override

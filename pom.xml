@@ -113,7 +113,7 @@
 			<plugin>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
-				<version>0.0.3</version>
+				<version>0.0.5</version>
 				<executions>
 					<execution>
 						<id>default-cli</id>
@@ -123,15 +123,22 @@
 								<option>-Djava.library.path=c:\tmp</option>
 								<option>--add-opens</option>
 								<option>javafx.graphics/javafx.scene=org.controlsfx.controls</option>
-								
+
 								<option>--add-opens</option>
 								<option>javafx.graphics/javafx.scene=com.jfoenix</option>
-								
+
 								<option>--add-exports</option>
 								<option>javafx.base/com.sun.javafx.event=com.jfoenix</option>
 							</options>
 							<mainClass>org.jflame.devAide.App</mainClass>
 							<executable>D:/Java/jdk-11.0.3/bin/java</executable>
+							<stripDebug>true</stripDebug>
+							<compress>2</compress>
+							<noHeaderFiles>true</noHeaderFiles>
+							<noManPages>true</noManPages>
+							<launcher>devAide</launcher>
+							<jlinkImageName>devAide</jlinkImageName>
+							<jlinkZipName>devAidezip</jlinkZipName>
 						</configuration>
 					</execution>
 					<execution>
@@ -142,10 +149,10 @@
 								<option>-Djava.library.path=c:\tmp</option>
 								<option>--add-opens</option>
 								<option>javafx.graphics/javafx.scene=org.controlsfx.controls</option>
-								
+
 								<option>--add-opens</option>
 								<option>javafx.graphics/javafx.scene=com.jfoenix</option>
-								
+
 								<option>--add-exports</option>
 								<option>javafx.base/com.sun.javafx.event=com.jfoenix</option>
 							</options>
@@ -155,7 +162,42 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/devAide/lib</outputDirectory>
+							<includeScope>runtime</includeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>org.jflame.devAide.App</mainClass>
+							 <classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+					</archive>
+					<outputDirectory>${project.build.directory}/devAide</outputDirectory>
+				</configuration>
+			</plugin>
+
+
 		</plugins>
+
 	</build>
 	<name>devAide</name>
 	<description>开发辅助工具盒</description>

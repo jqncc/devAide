@@ -90,7 +90,7 @@ public class SQLFormatter implements CodeFormatter {
             while (tokens.hasMoreTokens()) {
                 token = tokens.nextToken();
                 lcToken = token.toLowerCase();
-
+                System.out.println(token);
                 if ("'".equals(token)) {
                     String t;
                     do {
@@ -104,57 +104,34 @@ public class SQLFormatter implements CodeFormatter {
                         token += t;
                     } while (!"\"".equals(t));
                 }
-
                 if (afterByOrSetOrFromOrSelect && ",".equals(token)) {
                     commaAfterByOrFromOrSelect();
                 } else if (afterOn && ",".equals(token)) {
                     commaAfterOn();
-                }
-
-                else if ("(".equals(token)) {
+                } else if ("(".equals(token)) {
                     openParen();
                 } else if (")".equals(token)) {
                     closeParen();
-                }
-
-                else if (BEGIN_CLAUSES.contains(lcToken)) {
+                } else if (BEGIN_CLAUSES.contains(lcToken)) {
                     beginNewClause();
-                }
-
-                else if (END_CLAUSES.contains(lcToken)) {
+                } else if (END_CLAUSES.contains(lcToken)) {
                     endNewClause();
-                }
-
-                else if ("select".equals(lcToken)) {
+                } else if ("select".equals(lcToken)) {
                     select();
-                }
-
-                else if (DML.contains(lcToken)) {
+                } else if (DML.contains(lcToken)) {
                     updateOrInsertOrDelete();
-                }
-
-                else if ("values".equals(lcToken)) {
+                } else if ("values".equals(lcToken)) {
                     values();
-                }
-
-                else if ("on".equals(lcToken)) {
+                } else if ("on".equals(lcToken)) {
                     on();
-                }
-
-                else if (afterBetween && lcToken.equals("and")) {
+                } else if (afterBetween && lcToken.equals("and")) {
                     misc();
                     afterBetween = false;
-                }
-
-                else if (LOGICAL.contains(lcToken)) {
+                } else if (LOGICAL.contains(lcToken)) {
                     logical();
-                }
-
-                else if (isWhitespace(token)) {
+                } else if (isWhitespace(token)) {
                     white();
-                }
-
-                else {
+                } else {
                     misc();
                 }
 
@@ -347,12 +324,17 @@ public class SQLFormatter implements CodeFormatter {
 
     @Override
     public String convert(String source) {
-        return new FormatProcess(source).perform();
+        return new FormatProcess(source.replaceAll("\\s+,", ",")).perform();
     }
 
     @Override
     public boolean isSupported(String text) {
         String select = "\\bselect\\b[\\s\\S]+\\s+from\\s+\\S+";
+        String update = "\\bupdate\\s+set\\s+from\\s+\\S+";
+        String add = "\\binsert|repalce\\s+set\\s+from\\s+\\S+";
+        String delete = "delete";
+        String create = "create";
+        String alter = "alter table";
         return false;
     }
 

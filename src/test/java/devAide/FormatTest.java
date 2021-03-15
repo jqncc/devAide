@@ -3,6 +3,7 @@ package devAide;
 import java.util.regex.Pattern;
 
 import org.jflame.devAide.util.format.CssFormatter;
+import org.jflame.devAide.util.format.SQLFormatter;
 import org.junit.Test;
 
 public class FormatTest {
@@ -18,6 +19,15 @@ public class FormatTest {
                 Pattern.CASE_INSENSITIVE);
         System.out.println(cssPattern.matcher(srcStr)
                 .find());
+    }
+
+    @Test
+    public void testSQL() {
+        SQLFormatter formatter = new SQLFormatter();
+        // System.out.println(formatter.convert("select user ,pass from use_info where a=1"));
+        // System.out.println(formatter.convert("update use_info set user = 'test' where a=1"));
+        System.out.println(formatter.convert("select user ,pass from use_info where a=1 \n and b='cdsdfs'"));
+        System.out.println(formatter.convert("alter table a;add column a int;"));
     }
 
 }

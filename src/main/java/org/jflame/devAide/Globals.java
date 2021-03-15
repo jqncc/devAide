@@ -5,40 +5,8 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONValidator;
 
 public final class Globals {
-
-    public static void main(String[] args) {
-        String jsonText = "{\"k1\":[1,2,4],\"k2\":1,\"k3\":{\"l3\":\"lval3\"}}";
-        JSONValidator validator = JSONValidator.from(jsonText);
-        if (JSON.isValidArray(jsonText)) {
-            JSONArray root = JSON.parseArray(jsonText);
-            child(root);
-            /* int size = root.size();
-            String nodeName;
-            for (int i = 0; i < size; i++) {
-                Object node = root.get(i);
-                nodeName = "[" + i + "]:";
-                if (node instanceof JSONObject) {
-                    nodeName = nodeName + "[Object]";
-                    JSONObject jnode = (JSONObject) node;
-                    for (Map.Entry<String,Object> kv : jnode.entrySet()) {
-                        System.out.println(kv.getKey() + ":" + kv.getValue());
-                    }
-                } else if (node instanceof JSONArray) {
-                    nodeName = nodeName + "[Array]";
-                    JSONArray jnode = (JSONArray) node;
-                } else {
-                    nodeName = nodeName + node;
-                }
-                System.out.println(nodeName);
-            }*/
-        } else {
-            JSONObject root = JSON.parseObject(jsonText);
-            child(root);
-        }
-    }
 
     static void child(JSON jnode) {
         String nodeName = "";
